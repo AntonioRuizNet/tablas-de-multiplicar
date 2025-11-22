@@ -1,0 +1,52 @@
+.keyboard li:last-child {
+  background-color: #007c63;
+  color: white;
+}
+
+.milestone-bar {
+  margin-top: 30px;
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 10px;
+  background-color: #f0f0f0;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden; /* Evitar que ::before salga de los bordes */
+}
+
+.milestone-bar::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: var(--highlight-width, 0); /* Ancho dinámico */
+  background-color: #007c63;
+  z-index: 0; /* Asegura que esté detrás de los hitos */
+  transition: width 0.3s ease;
+}
+
+.milestone-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-top: -17px;
+  z-index: 10;
+  position: relative;
+}
+
+.milestone {
+  width: 25px;
+  height: 25px;
+  background-color: #ccc;
+  border-radius: 50%;
+  transition: background-color 0.3s ease;
+}
+
+.milestone.highlight {
+  background-color: #007c63;
+}

@@ -1,0 +1,101 @@
+html,
+body {
+  margin: 0;
+}
+
+body {
+  font-family: "Poppins", sans-serif;
+  background-color: #ececec;
+}
+
+a {
+  all: unset; /* Elimina todos los estilos predeterminados */
+  text-decoration: none; /* Quita el subrayado */
+  color: inherit; /* Usa el color del texto del elemento padre */
+  cursor: pointer; /* Asegura que el puntero cambie al estilo "mano" */
+}
+
+h4 {
+  margin-top: 10px;
+  margin-bottom: 6px;
+}
+
+.pizarra {
+  font-size: 1rem !important;
+  margin: 0;
+  width: 100%;
+  padding: 0;
+}
+
+.pizarra {
+  background-color: #007c63; /* Verde clásico de pizarra */
+  background-image: radial-gradient(#008a6d 2%, transparent 2%), radial-gradient(#008a6d 2%, transparent 2%);
+  background-size: 20px 20px;
+  background-position: 0 0, 10px 10px;
+  border: 5px solid #8b4513; /* Borde de madera marrón */
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.5); /* Sombra para dar profundidad */
+  border-radius: 8px; /* Bordes redondeados */
+  color: #f8f8f8; /* Texto blanco */
+  font-family: "Schoolbell", sans-serif; /* Fuente de tiza */
+  font-weight: 500;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.button-kids {
+  background-color: #fff; /* Color rojo anaranjado */
+  color: #000; /* Texto blanco */
+  font-size: 1.2rem; /* Tamaño de letra más grande */
+  padding: 0.1rem 1rem; /* Espaciado del botón */
+  border: none; /* Sin borde */
+  border-radius: 10px; /* Bordes ligeramente redondeados */
+  box-shadow: 0 6px #d1d1d1; /* Sombra inferior para efecto 3D */
+  text-shadow: 1px 1px 2px #000000; /* Sombra en el texto */
+  cursor: pointer; /* Cursor de mano */
+  transition: all 0.2s ease; /* Suavidad en la transición */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.button-kids:hover {
+  background-color: #fff; /* Color más claro en hover */
+  transform: translateY(-3px); /* Levanta el botón */
+  box-shadow: 0 9px #d1d1d1; /* Sombra más grande */
+}
+
+.button-kids:active {
+  transform: translateY(3px); /* Presión hacia abajo */
+  box-shadow: 0 3px #d1d1d1; /* Sombra más pequeña */
+}
+
+/* Estilos para pantallas de 800px o menos */
+@media (max-width: 800px) {
+  .button-kids {
+    padding: 0.2rem 1rem; /* Espaciado del botón */
+  }
+}
+
+@media screen and (max-width: 800px) and (orientation: landscape) {
+  body::before {
+    content: "Por favor, gira tu dispositivo a modo vertical 📱";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.95);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    text-align: center;
+    padding: 2rem;
+    font-size: 1.5rem;
+  }
+
+  body * {
+    visibility: hidden; /* oculta el resto del contenido visualmente */
+  }
+}
