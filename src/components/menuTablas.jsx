@@ -2,6 +2,7 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import { setComponentActive } from "../redux/reducers/userConfigSlice";
 import Link from "next/link"; // Importar Link de Next.js
+import styles from "./menuTablas.module.css";
 
 const tableList = [
   { name: 1, component: "tabla-del-1" },
@@ -28,17 +29,19 @@ export const MenuTablas = ({ callbackButton = () => null }) => {
   };
 
   return (
-    <div className="menuTablasContainer">
-      <h4>Ir a la tabla</h4>
-      <div className="menuTablas">
+    <div className={styles.container}>
+      <h3 className={styles.title}>Ir a la tabla</h3>
+      <div className={styles.grid}>
         {tableList.map((tabla) => (
-          <div
-            key={tabla.name} // Es importante agregar una key única en la lista
-            className="button-kids"
+          <Link
+            key={tabla.name}
+            className={styles.button}
+            href={`/${tabla.component}`}
             onClick={() => handleUrl(tabla.component)}
+            aria-label={`Ir a la tabla del ${tabla.name}`}
           >
-            <Link href={`/${tabla.component}`}>{tabla.name}</Link>
-          </div>
+            {tabla.name}
+          </Link>
         ))}
       </div>
     </div>

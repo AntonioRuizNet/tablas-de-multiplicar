@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import styles from "./milestoneBar.module.css";
 
 export const MilestoneBar = ({ totalMilestones, highlightUntil }) => {
   const milestones = Array.from({ length: totalMilestones }, (_, i) => i + 1);
@@ -9,10 +10,13 @@ export const MilestoneBar = ({ totalMilestones, highlightUntil }) => {
 
   return (
     <>
-      <div className="milestone-bar" style={{ "--highlight-width": highlightedWidth }}></div>
-      <div className="milestone-container" style={{ "--highlight-width": highlightedWidth }}>
+      <div className={styles.bar} style={{ "--highlight-width": highlightedWidth }} />
+      <div className={styles.container} style={{ "--highlight-width": highlightedWidth }}>
         {milestones.map((milestone) => (
-          <div key={milestone} className={`milestone ${milestone <= highlightUntil ? "highlight" : ""}`} />
+          <div
+            key={milestone}
+            className={`${styles.milestone} ${milestone <= highlightUntil ? styles.highlight : ""}`}
+          />
         ))}
       </div>
     </>

@@ -1,0 +1,52 @@
+.stats {
+  color: #8b5a2b;
+  width: 250px;
+  padding: 6px;
+  flex: 0 0 auto;
+}
+
+.level {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.levelNumber {
+  background-color: #8b5a2b;
+  border: 3px #5a3825 solid;
+  border-radius: 6px;
+  width: 96px;
+  text-align: center;
+  color: white;
+  font-size: 2rem;
+  line-height: 1;
+  padding: 6px 0;
+}
+
+.levelRange {
+  width: 100%;
+}
+
+.rangeName {
+  font-size: 0.95rem;
+  margin-bottom: 6px;
+}
+
+.points {
+  border: 3px #8b5a2b solid;
+  border-radius: 6px;
+  height: 18px;
+  overflow: hidden;
+}
+
+.pointsFill {
+  background-color: #5a3825;
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+@media (max-width: 800px) {
+  .stats {
+    width: 220px;
+  }
+}

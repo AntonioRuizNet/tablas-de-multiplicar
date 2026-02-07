@@ -1,314 +1,195 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-import { updateResume, updateOperationTimer, runningOperationTimer, updateStatus } from "../redux/reducers/userConfigSlice";
+import React, { useEffect, useMemo, useState } from "react";
+import Head from "next/head";
 import PropTypes from "prop-types";
-import { useSelector } from "react-redux";
-import { MenuTablas } from "../components/menuTablas";
+import { useDispatch, useSelector } from "react-redux";
+
+import styles from "./[tabla].module.css";
+
 import { MenuKeyboard } from "../components/keyboard";
-import { randomTip, rangos } from "../constants";
+import { MenuTablas } from "../components/menuTablas";
+import { randomTip } from "../constants";
+import { updateResume, updateOperationTimer, runningOperationTimer, updateStatus } from "../redux/reducers/userConfigSlice";
 
-function Temporizador() {
-  const dispatch = useDispatch();
-  //const timer = useSelector((state) => state.aplicationConfig.userConfig.operationTimer);
+import { StatsBar } from "../components/tabla/StatsBar";
+import { TableBoard } from "../components/tabla/TableBoard";
+import { WinModal } from "../components/tabla/WinModal";
+import { HistoryModal } from "../components/tabla/HistoryModal";
+import { SideMenu } from "../components/SideMenu/SideMenu";
 
-  useEffect(() => {
-    const intervalo = setInterval(() => {
-      dispatch(runningOperationTimer());
-    }, 1000);
+const SITE_URL = "https://tablasdemultiplicar.app";
+const OG_IMAGE = `${SITE_URL}/og-image.png`;
 
-    return () => clearInterval(intervalo); // limpia al desmontar
-  }, [dispatch]);
+function useRandomTip() {
+  return useMemo(() => {
+    const idx = Math.floor(Math.random() * randomTip.length);
+    return randomTip[idx];
+  }, []);
 }
 
 export const Tabla = ({ tabla }) => {
   const dispatch = useDispatch();
-  const component = useSelector((state) => state.aplicationConfig.userConfig.componentActive);
+  const segundos = useSelector((state) => state.aplicationConfig.userConfig.operationTimer);
+  const resume = useSelector((state) => state.aplicationConfig.userConfig.resume);
 
-  const numero = tabla.match(/\d+/)?.[0]; // Extrae el número de la cadena
+  const numero = useMemo(() => Number(tabla.match(/\d+/)?.[0] || 1), [tabla]);
+  const tip = useRandomTip();
+
   const [active, setActive] = useState(1);
-  const [values, updateValues] = useState([]);
-  const [error, setError] = useState(false);
-  //const [rango, updateRango] = useState(0);
-  //const [nivel, updateNivel] = useState(0);
-  //const [puntos, updatePuntos] = useState(0);
-  const [showHistorial, updateShowHistorial] = useState(false);
+  const [answers, setAnswers] = useState({});
+  const [showError, setShowError] = useState(false);
+  const [isWinOpen, setIsWinOpen] = useState(false);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const RandomTip = () => {
-    const [tip, setTip] = useState("");
-    useEffect(() => {
-      const random = Math.floor(Math.random() * randomTip.length);
-      setTip(randomTip[random]);
-    }, []);
-    return (
-      <div className="randomTip">
-        <p className="randomTip-title">Sabías que...</p>
-        <p>{tip}</p>
-      </div>
-    );
-  };
-
-  const reset = () => {
-    hideFloatPanel();
-    setActive(1);
-    updateValues([]);
-  };
-
-  const showFloatPanel = () => {
-    console.log("showFloatPanel Component");
-    const floatPanel = document.querySelector(".float-panel");
-    if (floatPanel) {
-      console.log("Encontrado, aplicando estilos");
-      floatPanel.classList.add("show");
-      floatPanel.classList.remove("hide");
-    }
-  };
-
-  const hideFloatPanel = () => {
-    console.log("hideFloatPanel Component");
-    const floatPanel = document.querySelector(".float-panel");
-    if (floatPanel) {
-      console.log("Encontrado, aplicando estilos");
-      floatPanel.classList.add("hide");
-      floatPanel.classList.remove("show");
-    }
-  };
-
+  // Temporizador global de la operación
   useEffect(() => {
-    console.log("useEffect component");
-    hideFloatPanel();
+    const id = setInterval(() => {
+      dispatch(runningOperationTimer());
+    }, 1000);
+    return () => clearInterval(id);
+  }, [dispatch]);
+
+  // Reset cuando cambia tabla
+  useEffect(() => {
     dispatch(updateOperationTimer(0));
-  }, [component]);
+    setActive(1);
+    setAnswers({});
+    setShowError(false);
+    setIsWinOpen(false);
+    setIsHistoryOpen(false);
+  }, [dispatch, tabla]);
 
-  const EnOrden = () => {
-    const numbers_1 = [1, 2, 3, 4, 5];
-    const numbers_2 = [6, 7, 8, 9, 10];
-    const Result = ({ number }) => {
-      const isActive = active === number;
-      const valueFound = values && values.filter((f) => f.name === number);
-      const value = valueFound.length > 0 ? valueFound[0].value : "";
-      return <div className={`tablaResult ${isActive && "tablaResultActive"}`}>{value}</div>;
-    };
-
-    Result.propTypes = {
-      number: PropTypes.number.isRequired,
-    };
-    return (
-      <div className="tabla-enOrden-2col">
-        <div className="tabla-enOrden-col">
-          {numbers_1.map((number) => (
-            <div className="tabla-enOrden" key={`number1-${number}`}>
-              <div>{numero}</div>
-              <div>x</div>
-              <div>{number}</div>
-              <div>=</div>
-              <Result number={number} />
-            </div>
-          ))}
-        </div>
-        <div className="tabla-enOrden-col">
-          {numbers_2.map((number) => (
-            <div className="tabla-enOrden" key={`number2-${number}`}>
-              <div>{numero}</div>
-              <div>x</div>
-              <div>{number}</div>
-              <div>=</div>
-              <Result number={number} />
-            </div>
-          ))}
-        </div>
-      </div>
-    );
+  const handleReset = () => {
+    setActive(1);
+    setAnswers({});
+    setIsWinOpen(false);
   };
 
-  const WoodenTable = () => {
-    const segundos = useSelector((state) => state.aplicationConfig.userConfig.operationTimer);
+  const handleKey = (value) => {
+    if (isWinOpen || isHistoryOpen) return;
 
-    const handleResult = (value) => {
-      console.log("handleResult ", numero, active, values.filter((f) => f.name === active)[0]?.value);
+    if (value === "Enviar") {
+      const current = Number(answers[active] || NaN);
+      const expected = numero * active;
 
-      if (value === "Enviar") {
-        if (numero * active === parseInt(values.filter((f) => f.name === active)[0]?.value)) {
-          //CORRECTO
-          dispatch(updateResume({ table: tabla, operation: numero + "x" + active, state: "Bien", time: segundos }));
-          console.log(tabla + " " + numero + "x" + active, "Bien");
-          if (active < 10) setActive(active + 1);
-          else {
-            console.log("showFloatPanel.........");
-            showFloatPanel();
-          }
-        } else {
-          //ERROR
-          console.log(tabla + " " + numero + "x" + active, "Mal");
-          dispatch(updateResume({ table: tabla, operation: numero + "x" + active, state: "Mal", time: segundos }));
-          setError(true);
-          setTimeout(() => {
-            setError(false);
-          }, 2000);
-          updateValues((prevValues) => {
-            // Buscar si ya existe un objeto con el name igual a active
-            const updatedValues = prevValues.map((item) => (item.name === active ? { ...item, value: "" } : item));
-            return updatedValues;
-          });
-        }
-        dispatch(updateOperationTimer(0));
-      } else if (value === "Borrar") {
-        updateValues((prevValues) => {
-          // Buscar si ya existe un objeto con el name igual a active
-          const updatedValues = prevValues.map((item) => (item.name === active ? { ...item, value: "" } : item));
-          return updatedValues;
-        });
+      if (current === expected) {
+        dispatch(updateResume({ table: tabla, operation: `${numero}x${active}`, state: "Bien", time: segundos }));
+        if (active < 10) setActive((p) => p + 1);
+        else setIsWinOpen(true);
       } else {
-        updateValues((prevValues) => {
-          // Buscar si ya existe un objeto con el name igual a active
-          const updatedValues = prevValues.map((item) => (item.name === active ? { ...item, value: item.value + "" + value } : item));
-
-          // Verificar si el objeto ya existía
-          const exists = updatedValues.some((item) => item.name === active);
-
-          // Si existe, retornar los valores actualizados; si no, agregar uno nuevo
-          return exists ? updatedValues : [...updatedValues, { tableNumber: numero, name: active, value }];
-        });
+        dispatch(updateResume({ table: tabla, operation: `${numero}x${active}`, state: "Mal", time: segundos }));
+        setShowError(true);
+        setTimeout(() => setShowError(false), 2000);
+        setAnswers((prev) => ({ ...prev, [active]: "" }));
       }
-    };
 
-    return (
-      <div className="wooden-table">
-        <MenuKeyboard callback={handleResult} />
-      </div>
-    );
+      dispatch(updateOperationTimer(0));
+      return;
+    }
+
+    if (value === "Borrar") {
+      setAnswers((prev) => ({ ...prev, [active]: "" }));
+      return;
+    }
+
+    setAnswers((prev) => ({ ...prev, [active]: `${prev[active] || ""}${String(value)}` }));
   };
 
-  // eslint-disable-next-line no-unused-vars
-  const Alert = ({ type, message }) => {
-    return <div className="fun-div">{message}</div>;
+  const pointsForTable = useMemo(() => {
+    const multiplicador = numero * 2.5 * 17;
+    const base = 5;
+    return Math.floor(Math.sqrt(multiplicador) * base);
+  }, [numero]);
+
+  const handleAwardAndClose = () => {
+    dispatch(updateStatus(pointsForTable));
+    handleReset();
   };
 
-  Alert.propTypes = {
-    type: PropTypes.string.isRequired,
-    message: PropTypes.string.isRequired,
-  };
-
-  const StatsV2 = () => {
-    const nivel = useSelector((state) => state.aplicationConfig.userConfig.nivel);
-    const puntos = useSelector((state) => state.aplicationConfig.userConfig.puntos);
-    const rango = useSelector((state) => state.aplicationConfig.userConfig.rango);
-    const rate = useSelector((state) => state.aplicationConfig.userConfig.rate);
-    const width = puntos > 100 ? puntos - nivel * 100 : puntos;
-    console.log("STATS => ", width, puntos, nivel, rate);
-    return (
-      <div className="statsv2">
-        <div className="level">
-          <div className="level-number">{nivel}</div>
-          <div className="level-range">
-            <div>{rangos[rango]}</div>
-            <div className="points">
-              <div className="points-fill" style={{ width: `${width}%` }}>
-                {" "}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  const handleHistorial = () => {
-    updateShowHistorial(!showHistorial);
-  };
-
-  const Menu = () => {
-    return (
-      <>
-        <div className="tablasHeader">
-          <StatsV2 />
-          <div className="historial">
-            <div className="link" onClick={handleHistorial}>
-              Historial
-            </div>
-          </div>
-        </div>
-        <div className="wooden-table-options">
-          <MenuTablas callbackButton={reset} />
-        </div>
-      </>
-    );
-  };
-
-  const FloatPanel = () => {
-    const multiplicador = parseInt(tabla.split("-")[2]) * 2.5 * 17;
-    const base = 5; // base mínima de puntos ganados
-    const scaled = Math.floor(Math.sqrt(multiplicador) * base); // progresión suave
-    //const puntosObtenidos = puntos + scaled;
-
-    const updateStats = () => {
-      //const nivelObtenido = Math.floor(puntosObtenidos / rate); // cada rate puntos = 1 nivel
-      //const rangoObtenido = Math.floor(nivelObtenido / 3); // cada 3 niveles = 1 rango
-      //updateRango(rangoObtenido);
-      //updateNivel(nivelObtenido);
-      //updatePuntos(puntosObtenidos);
-      dispatch(updateStatus(scaled));
-      reset();
-    };
-    return (
-      <div className="float-panel">
-        <>
-          <h3>¡Felicidades! Has pasado la prueba.</h3>
-          <h2>Has obtenido {parseInt(scaled)} puntos.</h2>
-          <RandomTip />
-          <h3>Elige una tabla de multiplicar para continuar.</h3>
-          <MenuTablas callbackButton={updateStats} />
-        </>
-      </div>
-    );
-  };
-
-  const HistorialPanel = () => {
-    const resume = useSelector((state) => state.aplicationConfig.userConfig.resume);
-    console.log("HistorialPanel", resume);
-    return (
-      <div className={`float-panel ${showHistorial ? "show" : "hide"}`}>
-        <div className="historialPanel">
-          <div className="link" onClick={handleHistorial} style={{ fontWeight: "bold", textAlign: "center", padding: "5px" }}>
-            Cerrar
-          </div>
-          <div className="historialData">
-            {[...resume].reverse().map((row, index) => (
-              <div className="historialRow" key={index}>
-                <div className="historialRowOp">{row.operation}</div> <div style={{ color: row.state === "Mal" && "#ffe736" }}>{row.state}</div>{" "}
-                <div>{row.time}s</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  };
+  const pageTitle = `Tabla del ${numero} | Tablas de multiplicar`;
+  const description = `Practica la tabla del ${numero} con un juego para niños: resuelve multiplicaciones, mejora tu tiempo y gana puntos.`;
+  const canonical = `${SITE_URL}/${tabla}`;
 
   return (
     <>
-      <div className="wall">
-        <Menu />
-        <FloatPanel />
-        <HistorialPanel />
-        <h4>Aprende la {tabla.replaceAll("-", " ")}</h4>
-        <div className="pizarra">
-          <EnOrden />
+      <Head>
+        <title>{pageTitle}</title>
+        <meta name="description" content={description} />
+        <link rel="canonical" href={canonical} />
+        <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content={pageTitle} />
+        <meta property="og:description" content={description} />
+        <meta property="og:url" content={canonical} />
+        <meta property="og:image" content={OG_IMAGE} />
+
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={pageTitle} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content={OG_IMAGE} />
+
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "LearningResource",
+              name: `Tabla de multiplicar del ${numero}`,
+              url: canonical,
+              inLanguage: "es-ES",
+              isAccessibleForFree: true,
+              teaches: ["tablas de multiplicar", `tabla del ${numero}`],
+              educationalLevel: "Primary education",
+              description,
+            }),
+          }}
+        />
+      </Head>
+
+      <div className={styles.page}>
+        <div className={styles.wall}>
+          <div className={styles.header}>
+            <StatsBar />
+
+            <SideMenu
+              isOpen={isMenuOpen}
+              onOpen={() => setIsMenuOpen(true)}
+              onClose={() => setIsMenuOpen(false)}
+              onOpenHistory={() => {
+                setIsMenuOpen(false);
+                setIsHistoryOpen(true);
+              }}
+              currentTabla={tabla}
+            />
+          </div>
+
+          <h1 className={styles.title}>Aprende la {tabla.replaceAll("-", " ")}</h1>
+
+          <TableBoard numero={numero} active={active} answers={answers} />
         </div>
 
-        {error && <Alert type="error" message="¡Incorrecta!" />}
+        <div className={styles.wooden}>
+          <MenuKeyboard callback={handleKey} />
+        </div>
+
+        {showError && <div className={styles.toast}>¡Incorrecta!</div>}
+
+        <WinModal isOpen={isWinOpen} onClose={() => setIsWinOpen(false)} points={pointsForTable} tip={tip}>
+          <MenuTablas callbackButton={handleAwardAndClose} />
+        </WinModal>
+
+        <HistoryModal isOpen={isHistoryOpen} onClose={() => setIsHistoryOpen(false)} rows={[...resume].slice(-200).reverse()} />
       </div>
-      <WoodenTable />
-      <Temporizador />
     </>
   );
 };
 
 export async function getServerSideProps(context) {
-  const { tabla } = context.params; // Obtiene el parámetro dinámico
-  return {
-    props: { tabla }, // Pasa el parámetro como prop
-  };
+  const { tabla } = context.params;
+  return { props: { tabla } };
 }
+
 Tabla.propTypes = {
   tabla: PropTypes.string.isRequired,
 };
