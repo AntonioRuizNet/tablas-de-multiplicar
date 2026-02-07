@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useRef } from "react";
 import Head from "next/head";
 import PropTypes from "prop-types";
 import { useDispatch, useSelector } from "react-redux";
@@ -15,6 +15,9 @@ import { TableBoard } from "../components/tabla/TableBoard";
 import { WinModal } from "../components/tabla/WinModal";
 import { HistoryModal } from "../components/tabla/HistoryModal";
 import { SideMenu } from "../components/SideMenu/SideMenu";
+import { AchievementsModal } from "../components/tabla/AchievementsModal";
+import { unlockMany } from "../redux/reducers/achievementsSlice";
+import { ProfileModal } from "../components/profile/ProfileModal";
 
 const SITE_URL = "https://tablasdemultiplicar.app";
 const OG_IMAGE = `${SITE_URL}/og-image.png`;
@@ -28,6 +31,8 @@ function useRandomTip() {
 
 export const Tabla = ({ tabla }) => {
   const dispatch = useDispatch();
+  const hasAwardedRef = useRef(false);
+
   const segundos = useSelector((state) => state.aplicationConfig.userConfig.operationTimer);
   const resume = useSelector((state) => state.aplicationConfig.userConfig.resume);
 
@@ -40,6 +45,8 @@ export const Tabla = ({ tabla }) => {
   const [isWinOpen, setIsWinOpen] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isAchievementsOpen, setIsAchievementsOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   // Temporizador global de la operación
   useEffect(() => {
@@ -57,16 +64,88 @@ export const Tabla = ({ tabla }) => {
     setShowError(false);
     setIsWinOpen(false);
     setIsHistoryOpen(false);
+    setIsMenuOpen(false);
+    setIsAchievementsOpen(false);
+    setIsProfileOpen(false);
+    hasAwardedRef.current = false;
   }, [dispatch, tabla]);
 
   const handleReset = () => {
     setActive(1);
     setAnswers({});
     setIsWinOpen(false);
+    // 👇 importante: si vuelves a empezar en la misma tabla, permite volver a premiar al completar
+    hasAwardedRef.current = false;
+  };
+
+  const pointsForTable = useMemo(() => {
+    const multiplicador = numero * 2.5 * 17;
+    const base = 5;
+    return Math.floor(Math.sqrt(multiplicador) * base);
+  }, [numero]);
+
+  const unlockOnTableComplete = () => {
+    const safeResume = Array.isArray(resume) ? resume : [];
+
+    // ✅ stats de la tabla actual (últimas 10)
+    const rowsForThisTable = safeResume.filter((r) => r.table === tabla).slice(-10);
+    const total = rowsForThisTable.length;
+    const ok = rowsForThisTable.filter((r) => r.state === "Bien").length;
+    const percent = total > 0 ? Math.round((ok / total) * 100) : 0;
+    const avgTime = total > 0 ? rowsForThisTable.reduce((acc, r) => acc + (Number(r.time) || 0), 0) / total : 999;
+
+    // ✅ stats globales
+    const totalCorrect = safeResume.filter((r) => r.state === "Bien").length;
+
+    // ✅ “tablas completadas” como número de finalizaciones (no únicas)
+    // Definición: cada vez que hay 10 operaciones registradas para una tabla, cuenta como 1 "tabla completada".
+    // Contamos por tabla: Math.floor(rows.length / 10), sumado.
+    const tableCounts = {};
+    safeResume.forEach((r) => {
+      tableCounts[r.table] = (tableCounts[r.table] || 0) + 1;
+    });
+
+    const completedTablesTotal = Object.values(tableCounts).reduce((acc, count) => acc + Math.floor(count / 10), 0);
+
+    const ids = [];
+
+    // 1) primera tabla completada (solo tiene sentido si has completado una)
+    if (total === 10) ids.push("first_table_completed");
+
+    // 2) tabla concreta
+    const n = Number(tabla.match(/\d+/)?.[0] || "");
+    if (Number.isFinite(n) && total === 10) ids.push(`complete_table_${n}`);
+
+    // 3) perfecta
+    if (total === 10 && percent === 100) ids.push("perfect_table");
+
+    // 4) velocidad
+    if (total === 10 && avgTime <= 3) ids.push("speedster");
+
+    // 5) completar X tablas (total de finalizaciones)
+    if (completedTablesTotal >= 5) ids.push("complete_5_tables");
+    if (completedTablesTotal >= 10) ids.push("complete_10_tables");
+    if (completedTablesTotal >= 25) ids.push("complete_25_tables");
+    if (completedTablesTotal >= 50) ids.push("complete_50_tables");
+
+    // 6) aciertos totales
+    if (totalCorrect >= 50) ids.push("get_50_correct");
+    if (totalCorrect >= 100) ids.push("get_100_correct");
+
+    dispatch(unlockMany(ids));
+  };
+
+  // ✅ Aquí se aplica TODO al momento de completar la tabla (no al cambiar de tabla)
+  const finalizeTableAndAward = () => {
+    if (hasAwardedRef.current) return;
+    hasAwardedRef.current = true;
+
+    unlockOnTableComplete();
+    dispatch(updateStatus(pointsForTable));
   };
 
   const handleKey = (value) => {
-    if (isWinOpen || isHistoryOpen) return;
+    if (isWinOpen || isHistoryOpen || isMenuOpen || isAchievementsOpen || isProfileOpen) return;
 
     if (value === "Enviar") {
       const current = Number(answers[active] || NaN);
@@ -74,8 +153,14 @@ export const Tabla = ({ tabla }) => {
 
       if (current === expected) {
         dispatch(updateResume({ table: tabla, operation: `${numero}x${active}`, state: "Bien", time: segundos }));
-        if (active < 10) setActive((p) => p + 1);
-        else setIsWinOpen(true);
+
+        if (active < 10) {
+          setActive((p) => p + 1);
+        } else {
+          // ✅ Completa tabla: premia + logros + abre modal
+          finalizeTableAndAward();
+          setIsWinOpen(true);
+        }
       } else {
         dispatch(updateResume({ table: tabla, operation: `${numero}x${active}`, state: "Mal", time: segundos }));
         setShowError(true);
@@ -95,20 +180,16 @@ export const Tabla = ({ tabla }) => {
     setAnswers((prev) => ({ ...prev, [active]: `${prev[active] || ""}${String(value)}` }));
   };
 
-  const pointsForTable = useMemo(() => {
-    const multiplicador = numero * 2.5 * 17;
-    const base = 5;
-    return Math.floor(Math.sqrt(multiplicador) * base);
-  }, [numero]);
-
+  // ✅ Ahora solo resetea/cierra (ya no otorga puntos ni logros)
   const handleAwardAndClose = () => {
-    dispatch(updateStatus(pointsForTable));
     handleReset();
   };
 
   const pageTitle = `Tabla del ${numero} | Tablas de multiplicar`;
   const description = `Practica la tabla del ${numero} con un juego para niños: resuelve multiplicaciones, mejora tu tiempo y gana puntos.`;
   const canonical = `${SITE_URL}/${tabla}`;
+
+  const safeResume = Array.isArray(resume) ? resume : [];
 
   return (
     <>
@@ -161,6 +242,8 @@ export const Tabla = ({ tabla }) => {
                 setIsHistoryOpen(true);
               }}
               currentTabla={tabla}
+              onOpenAchievements={() => setIsAchievementsOpen(true)}
+              onOpenProfile={() => setIsProfileOpen(true)}
             />
           </div>
 
@@ -179,7 +262,13 @@ export const Tabla = ({ tabla }) => {
           <MenuTablas callbackButton={handleAwardAndClose} />
         </WinModal>
 
-        <HistoryModal isOpen={isHistoryOpen} onClose={() => setIsHistoryOpen(false)} rows={[...resume].slice(-200).reverse()} />
+        <HistoryModal
+          isOpen={isHistoryOpen}
+          onClose={() => setIsHistoryOpen(false)}
+          rows={[...safeResume].slice(-200).reverse()}
+        />
+        <AchievementsModal isOpen={isAchievementsOpen} onClose={() => setIsAchievementsOpen(false)} />
+        <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} />
       </div>
     </>
   );

@@ -1,11 +1,14 @@
 // pages/_app.js
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import Script from "next/script";
 import { Provider } from "react-redux";
-import { store } from "../redux/store";
+import { PersistGate } from "redux-persist/integration/react";
+
+import { store, persistor } from "../redux/store";
 
 import "../styles/globals.css";
+import { AchievementsToastStack } from "../components/AchievementChip/AchievementsToastStack";
 
 /* eslint-disable react/prop-types */
 
@@ -13,6 +16,11 @@ const SITE_URL = "https://tablasdemultiplicar.app";
 const GA_ID = "G-H0C71YDJBT";
 
 export default function App({ Component, pageProps }) {
+  // PersistGate solo en cliente para evitar problemas SSR
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => setIsClient(true), []);
+
   return (
     <Provider store={store}>
       <Head>
@@ -42,7 +50,16 @@ export default function App({ Component, pageProps }) {
         `}
       </Script>
 
-      <Component {...pageProps} />
+      {isClient ? (
+        <PersistGate loading={null} persistor={persistor}>
+          {/* Toasts globales */}
+          <AchievementsToastStack />
+
+          <Component {...pageProps} />
+        </PersistGate>
+      ) : (
+        <Component {...pageProps} />
+      )}
     </Provider>
   );
 }

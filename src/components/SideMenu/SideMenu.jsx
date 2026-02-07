@@ -5,7 +5,7 @@ import styles from "./SideMenu.module.css";
 
 const TABLES = Array.from({ length: 12 }, (_, i) => i + 1);
 
-export function SideMenu({ isOpen, onOpen, onClose, onOpenHistory, currentTabla }) {
+export function SideMenu({ isOpen, onOpen, onClose, onOpenHistory, onOpenAchievements, onOpenProfile, currentTabla }) {
   // Cerrar con ESC
   useEffect(() => {
     if (!isOpen) return;
@@ -46,8 +46,28 @@ export function SideMenu({ isOpen, onOpen, onClose, onOpenHistory, currentTabla 
         </div>
 
         <nav className={styles.nav} aria-label="Navegación">
+          <button
+            type="button"
+            className={styles.itemButton}
+            onClick={() => {
+              onClose();
+              onOpenProfile();
+            }}
+          >
+            Perfil
+          </button>
           <button type="button" className={styles.itemButton} onClick={onOpenHistory}>
             Historial
+          </button>
+          <button
+            type="button"
+            className={styles.itemButton}
+            onClick={() => {
+              onClose();
+              onOpenAchievements();
+            }}
+          >
+            Logros
           </button>
 
           <div className={styles.divider} />
@@ -84,5 +104,7 @@ SideMenu.propTypes = {
   onOpen: PropTypes.func.isRequired,
   onClose: PropTypes.func.isRequired,
   onOpenHistory: PropTypes.func.isRequired,
+  onOpenAchievements: PropTypes.func.isRequired,
+  onOpenProfile: PropTypes.func.isRequired,
   currentTabla: PropTypes.string.isRequired,
 };
