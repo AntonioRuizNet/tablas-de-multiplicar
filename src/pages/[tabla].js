@@ -48,6 +48,8 @@ export const Tabla = ({ tabla }) => {
   const [isAchievementsOpen, setIsAchievementsOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
+  const safeResume = Array.isArray(resume) ? resume : [];
+
   // Temporizador global de la operación
   useEffect(() => {
     const id = setInterval(() => {
@@ -74,7 +76,7 @@ export const Tabla = ({ tabla }) => {
     setActive(1);
     setAnswers({});
     setIsWinOpen(false);
-    // 👇 importante: si vuelves a empezar en la misma tabla, permite volver a premiar al completar
+    // si vuelves a empezar en la misma tabla, permite volver a premiar al completar
     hasAwardedRef.current = false;
   };
 
@@ -84,32 +86,29 @@ export const Tabla = ({ tabla }) => {
     return Math.floor(Math.sqrt(multiplicador) * base);
   }, [numero]);
 
-  const unlockOnTableComplete = () => {
-    const safeResume = Array.isArray(resume) ? resume : [];
+  const unlockOnTableComplete = (resumeSnapshot) => {
+    const snapshot = Array.isArray(resumeSnapshot) ? resumeSnapshot : [];
 
-    // ✅ stats de la tabla actual (últimas 10)
-    const rowsForThisTable = safeResume.filter((r) => r.table === tabla).slice(-10);
+    // stats de la tabla actual (últimas 10)
+    const rowsForThisTable = snapshot.filter((r) => r.table === tabla).slice(-10);
     const total = rowsForThisTable.length;
     const ok = rowsForThisTable.filter((r) => r.state === "Bien").length;
     const percent = total > 0 ? Math.round((ok / total) * 100) : 0;
     const avgTime = total > 0 ? rowsForThisTable.reduce((acc, r) => acc + (Number(r.time) || 0), 0) / total : 999;
 
-    // ✅ stats globales
-    const totalCorrect = safeResume.filter((r) => r.state === "Bien").length;
+    // stats globales
+    const totalCorrect = snapshot.filter((r) => r.state === "Bien").length;
 
-    // ✅ “tablas completadas” como número de finalizaciones (no únicas)
-    // Definición: cada vez que hay 10 operaciones registradas para una tabla, cuenta como 1 "tabla completada".
-    // Contamos por tabla: Math.floor(rows.length / 10), sumado.
+    // “tablas completadas” como número de finalizaciones (no únicas)
     const tableCounts = {};
-    safeResume.forEach((r) => {
+    snapshot.forEach((r) => {
       tableCounts[r.table] = (tableCounts[r.table] || 0) + 1;
     });
-
     const completedTablesTotal = Object.values(tableCounts).reduce((acc, count) => acc + Math.floor(count / 10), 0);
 
     const ids = [];
 
-    // 1) primera tabla completada (solo tiene sentido si has completado una)
+    // 1) primera tabla completada (solo si has completado una tabla)
     if (total === 10) ids.push("first_table_completed");
 
     // 2) tabla concreta
@@ -132,15 +131,14 @@ export const Tabla = ({ tabla }) => {
     if (totalCorrect >= 50) ids.push("get_50_correct");
     if (totalCorrect >= 100) ids.push("get_100_correct");
 
-    dispatch(unlockMany(ids));
+    if (ids.length) dispatch(unlockMany(ids));
   };
 
-  // ✅ Aquí se aplica TODO al momento de completar la tabla (no al cambiar de tabla)
-  const finalizeTableAndAward = () => {
+  const finalizeTableAndAward = (resumeSnapshot) => {
     if (hasAwardedRef.current) return;
     hasAwardedRef.current = true;
 
-    unlockOnTableComplete();
+    unlockOnTableComplete(resumeSnapshot);
     dispatch(updateStatus(pointsForTable));
   };
 
@@ -152,17 +150,24 @@ export const Tabla = ({ tabla }) => {
       const expected = numero * active;
 
       if (current === expected) {
-        dispatch(updateResume({ table: tabla, operation: `${numero}x${active}`, state: "Bien", time: segundos }));
+        const nextRow = { table: tabla, operation: `${numero}x${active}`, state: "Bien", time: segundos };
+
+        // 1) guarda en redux
+        dispatch(updateResume(nextRow));
 
         if (active < 10) {
           setActive((p) => p + 1);
         } else {
-          // ✅ Completa tabla: premia + logros + abre modal
-          finalizeTableAndAward();
+          // ✅ IMPORTANTE: calcula logros con snapshot que incluye la 10ª operación
+          const nextResumeSnapshot = [...safeResume, nextRow];
+
+          finalizeTableAndAward(nextResumeSnapshot);
           setIsWinOpen(true);
         }
       } else {
-        dispatch(updateResume({ table: tabla, operation: `${numero}x${active}`, state: "Mal", time: segundos }));
+        const nextRow = { table: tabla, operation: `${numero}x${active}`, state: "Mal", time: segundos };
+        dispatch(updateResume(nextRow));
+
         setShowError(true);
         setTimeout(() => setShowError(false), 2000);
         setAnswers((prev) => ({ ...prev, [active]: "" }));
@@ -180,7 +185,7 @@ export const Tabla = ({ tabla }) => {
     setAnswers((prev) => ({ ...prev, [active]: `${prev[active] || ""}${String(value)}` }));
   };
 
-  // ✅ Ahora solo resetea/cierra (ya no otorga puntos ni logros)
+  // Ahora solo resetea/cierra
   const handleAwardAndClose = () => {
     handleReset();
   };
@@ -188,8 +193,6 @@ export const Tabla = ({ tabla }) => {
   const pageTitle = `Tabla del ${numero} | Tablas de multiplicar`;
   const description = `Practica la tabla del ${numero} con un juego para niños: resuelve multiplicaciones, mejora tu tiempo y gana puntos.`;
   const canonical = `${SITE_URL}/${tabla}`;
-
-  const safeResume = Array.isArray(resume) ? resume : [];
 
   return (
     <>
