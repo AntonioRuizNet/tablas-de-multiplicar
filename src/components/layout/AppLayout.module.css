@@ -1,0 +1,31 @@
+.shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.body {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 16px;
+  padding: 16px;
+}
+
+.sidebarDesktop {
+  display: block;
+}
+
+.main {
+  min-width: 0;
+}
+
+/* Mobile: ocultamos sidebar y usamos drawer */
+@media (max-width: 900px) {
+  .body {
+    grid-template-columns: 1fr;
+  }
+  .sidebarDesktop {
+    display: none;
+  }
+}

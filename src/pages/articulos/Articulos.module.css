@@ -1,0 +1,67 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.card {
+  display: block;
+  text-decoration: none;
+
+  border-radius: 18px;
+  padding: 16px;
+
+  background: linear-gradient(180deg, rgba(14, 165, 233, 0.12), rgba(14, 165, 233, 0.06));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    background 180ms ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+.title {
+  margin: 0 0 8px;
+  font-size: 1.1rem;
+}
+
+.description {
+  margin: 0 0 12px;
+  color: rgba(0, 0, 0, 0.75);
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  font-size: 0.85rem;
+}
+
+.meta time {
+  opacity: 0.8;
+}
+
+.keywords {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.keywords li {
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+
+  background: rgba(255, 255, 255, 0.9);
+}

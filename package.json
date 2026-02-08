@@ -21,7 +21,8 @@
     "build": "next build",
     "start": "next start",
     "test": "next test",
-    "export": "next build && next export"
+    "export": "next build && next export",
+    "sitemap": "node scripts/generate-sitemap.mjs"
   },
   "eslintConfig": {
     "extends": [

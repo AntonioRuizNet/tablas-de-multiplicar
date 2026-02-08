@@ -3,6 +3,7 @@
   height: 44px;
   border: none;
   background: rgba(255, 255, 255, 0.35);
+
   border: 1px solid rgba(139, 90, 43, 0.25);
   border-radius: 12px;
   cursor: pointer;
@@ -36,6 +37,7 @@
   inset: 0;
   background: rgba(255, 255, 255, 0.35);
   backdrop-filter: blur(10px);
+  opacity: 0.98;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.18s ease;

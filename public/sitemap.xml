@@ -6,6 +6,11 @@
     <priority>1.0</priority>
   </url>
   <url>
+    <loc>https://tablasdemultiplicar.app/articulos</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://tablasdemultiplicar.app/tabla-del-1</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -64,5 +69,25 @@
     <loc>https://tablasdemultiplicar.app/tabla-del-12</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://tablasdemultiplicar.app/articulos/trucos-aprender-tablas-multiplicar</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://tablasdemultiplicar.app/articulos/aprender-tablas-multiplicar-sin-memorizar</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://tablasdemultiplicar.app/articulos/juegos-aprender-tablas-multiplicar-casa</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://tablasdemultiplicar.app/articulos/errores-comunes-aprender-tablas-multiplicar</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
   </url>
 </urlset>
