@@ -242,11 +242,12 @@ export const Tabla = ({ tabla }) => {
             <StatsBar />
 
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <TableNav numero={numero} />
               <div className={styles.actions}>
-                <TipsButton onClick={() => setIsTipsOpen(true)} />
-
-                <ExplanationButton onClick={() => setIsExplOpen(true)} />
+                <TableNav numero={numero} />
+                <div className={styles.actionsHelpers}>
+                  <TipsButton onClick={() => setIsTipsOpen(true)} />
+                  <ExplanationButton onClick={() => setIsExplOpen(true)} />
+                </div>
               </div>
             </div>
             <SideMenu

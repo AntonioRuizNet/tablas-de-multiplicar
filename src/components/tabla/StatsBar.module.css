@@ -1,7 +1,6 @@
 .stats {
   color: #8b5a2b;
-  width: 200px;
-  padding: 6px;
+  width: 150px;
   flex: 0 0 auto;
 }
 
@@ -56,6 +55,6 @@
 
 @media (max-width: 800px) {
   .stats {
-    width: 180px;
+    width: 150px;
   }
 }

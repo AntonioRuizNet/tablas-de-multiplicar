@@ -7,7 +7,7 @@
 
 .link {
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 500;
   color: #8b5a2b;
   text-decoration: none;
   padding: 6px 10px;
@@ -29,12 +29,4 @@
   border: 1px solid rgba(139, 90, 43, 0.15);
   background: rgba(255, 255, 255, 0.2);
   user-select: none;
-}
-
-/* Ajustes responsive */
-@media (max-width: 900px) {
-  .nav {
-    gap: 5px;
-    flex-direction: column;
-  }
 }
