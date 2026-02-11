@@ -241,15 +241,6 @@ export const Tabla = ({ tabla }) => {
           <div className={styles.header}>
             <StatsBar />
 
-            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <div className={styles.actions}>
-                <TableNav numero={numero} />
-                <div className={styles.actionsHelpers}>
-                  <TipsButton onClick={() => setIsTipsOpen(true)} />
-                  <ExplanationButton onClick={() => setIsExplOpen(true)} />
-                </div>
-              </div>
-            </div>
             <SideMenu
               isOpen={isMenuOpen}
               onOpen={() => setIsMenuOpen(true)}
@@ -262,9 +253,16 @@ export const Tabla = ({ tabla }) => {
               onOpenAchievements={() => setIsAchievementsOpen(true)}
               onOpenProfile={() => setIsProfileOpen(true)}
             />
-            <TipsModal isOpen={isTipsOpen} onClose={() => setIsTipsOpen(false)} numero={numero} />
-            <ExplanationModal isOpen={isExplOpen} onClose={() => setIsExplOpen(false)} numero={numero} />
           </div>
+
+          <div className={styles.actions}>
+            <TableNav numero={numero} />
+            <TipsButton onClick={() => setIsTipsOpen(true)} />
+            <ExplanationButton onClick={() => setIsExplOpen(true)} />
+          </div>
+
+          <TipsModal isOpen={isTipsOpen} onClose={() => setIsTipsOpen(false)} numero={numero} />
+          <ExplanationModal isOpen={isExplOpen} onClose={() => setIsExplOpen(false)} numero={numero} />
 
           <h1 className={styles.title}>Aprende la {tabla.replaceAll("-", " ")}</h1>
 

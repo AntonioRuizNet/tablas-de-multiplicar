@@ -111,29 +111,17 @@
   }
   .actions {
     display: flex;
+    justify-content: center;
     gap: 10px;
-    flex-direction: row;
-  }
-  .actionsHelpers {
-    gap: 10px;
-    display: flex;
-    flex-wrap: wrap;
+    width: 100%;
   }
 }
 
 /* Ajustes responsive */
 @media (max-width: 900px) {
   .actions {
+    padding-top: 10px;
     display: flex;
-    gap: 5px;
-    flex-direction: column;
-  }
-  .actionsHelpers {
-    gap: 10px;
-    display: flex;
-    flex-wrap: wrap;
-  }
-  .actionsHelpers > * {
-    flex: 1;
+    gap: 2px;
   }
 }
