@@ -31,7 +31,9 @@ h4 {
   background-color: #007c63; /* Verde clásico de pizarra */
   background-image: radial-gradient(#008a6d 2%, transparent 2%), radial-gradient(#008a6d 2%, transparent 2%);
   background-size: 20px 20px;
-  background-position: 0 0, 10px 10px;
+  background-position:
+    0 0,
+    10px 10px;
   border: 5px solid #8b4513; /* Borde de madera marrón */
   box-shadow: 0 8px 15px rgba(0, 0, 0, 0.5); /* Sombra para dar profundidad */
   border-radius: 8px; /* Bordes redondeados */
@@ -83,7 +85,7 @@ h4 {
     top: 0;
     left: 0;
     width: 100vw;
-    height: 100vh;
+    height: 100svh;
     background: rgba(0, 0, 0, 0.95);
     color: white;
     display: flex;

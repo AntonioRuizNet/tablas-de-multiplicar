@@ -54,7 +54,7 @@
   position: fixed;
   top: 0;
   right: 0;
-  height: 100vh;
+  height: 100svh;
   width: min(360px, 86vw);
 
   background: rgba(255, 255, 255, 0.55);
