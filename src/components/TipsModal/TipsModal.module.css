@@ -1,0 +1,148 @@
+.tipButton {
+  font-size: 13px;
+  font-weight: 700;
+  color: #8b5a2b;
+  padding: 6px 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.35);
+  border: 1px solid rgba(139, 90, 43, 0.25);
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.tipButton:hover {
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  display: none; /* importante: montado pero no visible */
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+}
+
+.open {
+  display: flex;
+}
+
+.modal {
+  width: min(720px, 100%);
+  max-height: min(80vh, 720px);
+  overflow: auto;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.title {
+  margin: 0;
+  font-size: 16px;
+  color: #2b2b2b;
+}
+
+.close {
+  border: 0;
+  background: transparent;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 10px;
+}
+
+.close:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.body {
+  padding: 14px 16px 16px;
+}
+
+.p {
+  margin: 0 0 12px;
+  color: #2b2b2b;
+  line-height: 1.5;
+  font-size: 14px;
+}
+
+.h3 {
+  margin: 14px 0 8px;
+  color: #2b2b2b;
+  font-size: 14px;
+}
+
+.list {
+  margin: 0;
+  padding-left: 18px;
+  color: #2b2b2b;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.faq details {
+  padding: 8px 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.faq details:last-child {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.faq summary {
+  cursor: pointer;
+  font-weight: 700;
+  color: #2b2b2b;
+  font-size: 14px;
+}
+
+.faq p {
+  margin: 8px 0 0;
+  color: #2b2b2b;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.link {
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 700;
+  color: #0b65c2;
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: rgba(11, 101, 194, 0.08);
+}
+
+.link:hover {
+  background: rgba(11, 101, 194, 0.14);
+}
+
+.linkDisabled {
+  opacity: 0.4;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.06);
+  user-select: none;
+}

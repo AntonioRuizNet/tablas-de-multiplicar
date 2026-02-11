@@ -76,8 +76,8 @@ export function SideMenu({ isOpen, onOpen, onClose, onOpenHistory, onOpenAchieve
 
           <div className={styles.tablesGrid}>
             {TABLES.map((n) => {
-              const href = `/tabla-${n}`;
-              const isActive = currentTabla === `tabla-${n}`;
+              const href = `/tabla-del-${n}`;
+              const isActive = currentTabla === `tabla-del-${n}`;
               return (
                 <Link
                   key={n}

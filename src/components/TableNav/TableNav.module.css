@@ -1,0 +1,40 @@
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 0 0 auto;
+}
+
+.link {
+  font-size: 13px;
+  font-weight: 600;
+  color: #8b5a2b;
+  text-decoration: none;
+  padding: 6px 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.35);
+  border: 1px solid rgba(139, 90, 43, 0.25);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.link:hover {
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.disabled {
+  opacity: 0.25;
+  padding: 6px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(139, 90, 43, 0.15);
+  background: rgba(255, 255, 255, 0.2);
+  user-select: none;
+}
+
+/* Ajustes responsive */
+@media (max-width: 900px) {
+  .nav {
+    gap: 5px;
+    flex-direction: column;
+  }
+}

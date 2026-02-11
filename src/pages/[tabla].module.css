@@ -110,3 +110,12 @@
     text-overflow: unset;
   }
 }
+
+/* Ajustes responsive */
+@media (max-width: 900px) {
+  .actions {
+    display: flex;
+    gap: 5px;
+    flex-direction: column;
+  }
+}

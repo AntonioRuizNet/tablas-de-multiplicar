@@ -18,6 +18,9 @@ import { SideMenu } from "../components/SideMenu/SideMenu";
 import { AchievementsModal } from "../components/tabla/AchievementsModal";
 import { unlockMany } from "../redux/reducers/achievementsSlice";
 import { ProfileModal } from "../components/profile/ProfileModal";
+import { TableNav } from "../components/TableNav/TableNav";
+import { TipsButton, TipsModal } from "../components/TipsModal/TipsModal";
+import { ExplanationButton, ExplanationModal } from "../components/tabla/ExplanationModal";
 
 const SITE_URL = "https://tablasdemultiplicar.app";
 const OG_IMAGE = `${SITE_URL}/og-image.png`;
@@ -47,6 +50,8 @@ export const Tabla = ({ tabla }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAchievementsOpen, setIsAchievementsOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isTipsOpen, setIsTipsOpen] = useState(false);
+  const [isExplOpen, setIsExplOpen] = useState(false);
 
   const safeResume = Array.isArray(resume) ? resume : [];
 
@@ -236,6 +241,14 @@ export const Tabla = ({ tabla }) => {
           <div className={styles.header}>
             <StatsBar />
 
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <TableNav numero={numero} />
+              <div className={styles.actions}>
+                <TipsButton onClick={() => setIsTipsOpen(true)} />
+
+                <ExplanationButton onClick={() => setIsExplOpen(true)} />
+              </div>
+            </div>
             <SideMenu
               isOpen={isMenuOpen}
               onOpen={() => setIsMenuOpen(true)}
@@ -248,6 +261,8 @@ export const Tabla = ({ tabla }) => {
               onOpenAchievements={() => setIsAchievementsOpen(true)}
               onOpenProfile={() => setIsProfileOpen(true)}
             />
+            <TipsModal isOpen={isTipsOpen} onClose={() => setIsTipsOpen(false)} numero={numero} />
+            <ExplanationModal isOpen={isExplOpen} onClose={() => setIsExplOpen(false)} numero={numero} />
           </div>
 
           <h1 className={styles.title}>Aprende la {tabla.replaceAll("-", " ")}</h1>

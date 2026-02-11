@@ -126,7 +126,7 @@ export default function Home() {
 
               <div className={styles.quickGrid}>
                 {TABLES.map((n) => (
-                  <Link key={n} href={`/tabla-${n}`} className={styles.quickBtn} aria-label={`Practicar tabla del ${n}`}>
+                  <Link key={n} href={`/tabla-del-${n}`} className={styles.quickBtn} aria-label={`Practicar tabla del ${n}`}>
                     {n}
                   </Link>
                 ))}

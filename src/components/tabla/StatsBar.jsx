@@ -13,9 +13,11 @@ export function StatsBar() {
   return (
     <div className={styles.stats} aria-label="Progreso">
       <div className={styles.level}>
-        <div className={styles.levelNumber}>{nivel}</div>
-        <div className={styles.levelRange}>
+        <div className={styles.levelAndRange}>
+          <div className={styles.levelNumber}>{nivel}</div>
           <div className={styles.rangeName}>{rangos[rango] || rangos[rangos.length - 1]}</div>
+        </div>
+        <div className={styles.levelRange}>
           <div className={styles.points} aria-hidden="true">
             <div className={styles.pointsFill} style={{ width: `${Math.min(Math.max(width, 0), 100)}%` }} />
           </div>

@@ -1,7 +1,11 @@
-//Puedo usar este comando o el siguiente promtp: “Usa el prompt maestro. Tema: …” / Usa el prompt maestro. Tema: Alguno muy relevante y que sea tendencia sobre las tablas de multiplicar.
-//Ejecutar npm run sitemap despues de agregar posts
-// eslint-disable-next-line no-unused-vars
-const PROMPT = `Quiero que generes UN artículo educativo y optimizado para SEO,
+/*
+  Puedo usar este comando o el siguiente promtp: 
+    - “Usa el prompt maestro. Tema: …”
+    - Usa el prompt maestro. Tema: Alguno muy relevante y que sea tendencia sobre las tablas de multiplicar.
+  Ejecutar npm run sitemap despues de agregar posts
+*/
+/* PROMPT
+Quiero que generes UN artículo educativo y optimizado para SEO,
 destinado a una web sobre tablas de multiplicar (educación primaria).
 
 REQUISITOS OBLIGATORIOS:
@@ -69,7 +73,7 @@ de las tablas de multiplicar y ayuden al posicionamiento orgánico del sitio.
 
 Ahora genera un artículo completo sobre el siguiente tema:
 [TEMA DEL ARTÍCULO AQUÍ]
-`;
+*/
 
 export const ARTICLES = [
   {
