@@ -1,7 +1,7 @@
 import React from "react";
 import { AppLayout } from "../../components/layout/AppLayout";
 import Link from "next/link";
-import { ARTICLES } from "../../content/articles";
+import { ARTICLES } from "../../content/articles/index";
 import styles from "./Articulos.module.css";
 
 export default function Articulos() {

@@ -21,9 +21,26 @@ import { ProfileModal } from "../components/profile/ProfileModal";
 import { TableNav } from "../components/TableNav/TableNav";
 import { TipsButton, TipsModal } from "../components/TipsModal/TipsModal";
 import { ExplanationButton, ExplanationModal } from "../components/tabla/ExplanationModal";
+import Link from "next/link";
+import { Breadcrumbs } from "../components/seo/Breadcrumbs";
 
 const SITE_URL = "https://tablasdemultiplicar.app";
 const OG_IMAGE = `${SITE_URL}/og-image.png`;
+
+const TABLE_GUIDES = {
+  1: { trick: "Multiplicar por 1 deja el número igual.", example: "1 × 8 = 8" },
+  2: { trick: "Multiplicar por 2 es calcular el doble.", example: "2 × 7 = 14" },
+  3: { trick: "Puedes pensar en el doble más una copia del número.", example: "3 × 6 = 12 + 6 = 18" },
+  4: { trick: "Es el doble del doble.", example: "4 × 7: 7 → 14 → 28" },
+  5: { trick: "Los resultados terminan en 5 o en 0.", example: "5 × 9 = 45" },
+  6: { trick: "Puedes partir de 5 veces el número y sumar una copia más.", example: "6 × 7 = 35 + 7 = 42" },
+  7: { trick: "Relaciona los productos difíciles con otros cercanos que ya conoces.", example: "7 × 8 = 5 × 8 + 2 × 8 = 56" },
+  8: { trick: "Puedes duplicar tres veces para multiplicar por 8.", example: "8 × 6: 6 → 12 → 24 → 48" },
+  9: { trick: "Del 1 al 10, las decenas suben mientras las unidades bajan.", example: "9 × 7 = 63" },
+  10: { trick: "Multiplicar un entero por 10 añade un cero al final.", example: "10 × 8 = 80" },
+  11: { trick: "Del 1 al 9, los resultados repiten la cifra.", example: "11 × 7 = 77" },
+  12: { trick: "Puedes calcular 10 veces el número y sumar 2 veces el número.", example: "12 × 7 = 70 + 14 = 84" },
+};
 
 function useRandomTip() {
   return useMemo(() => {
@@ -41,6 +58,7 @@ export const Tabla = ({ tabla }) => {
 
   const numero = useMemo(() => Number(tabla.match(/\d+/)?.[0] || 1), [tabla]);
   const tip = useRandomTip();
+  const guide = TABLE_GUIDES[numero];
 
   const [active, setActive] = useState(1);
   const [answers, setAnswers] = useState({});
@@ -236,7 +254,15 @@ export const Tabla = ({ tabla }) => {
         />
       </Head>
 
-      <div className={styles.page}>
+      <div className={styles.root}>
+        <div className={styles.breadcrumbTop}>
+          <Breadcrumbs items={[
+            { name: "Inicio", href: "/" },
+            { name: "Todas las tablas", href: "/todas-las-tablas-de-multiplicar" },
+            { name: `Tabla del ${numero}`, href: `/tabla-del-${numero}` },
+          ]} />
+        </div>
+        <section className={styles.gameViewport} aria-label={`Práctica interactiva de la tabla del ${numero}`}>
         <div className={styles.wall}>
           <div className={styles.header}>
             <StatsBar />
@@ -286,14 +312,57 @@ export const Tabla = ({ tabla }) => {
         />
         <AchievementsModal isOpen={isAchievementsOpen} onClose={() => setIsAchievementsOpen(false)} />
         <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} />
+        </section>
+
+        <section className={styles.seoContent}>
+          <h2>Cómo aprender la tabla del {numero}</h2>
+          <p>Empieza entendiendo cada multiplicación, repasa la tabla completa y practica recuperando el resultado de memoria. Cuando puedas responder en orden, mezcla las operaciones para evitar depender de la secuencia.</p>
+          <div className={styles.tableTip}><strong>Truco para la tabla del {numero}:</strong> {guide.trick} <span>Ejemplo: {guide.example}.</span></div>
+
+          <div className={styles.seoCards}>
+            <article><h3>Practica sin mirar</h3><p>Intenta responder antes de consultar el resultado. Equivocarse sirve para detectar qué operaciones necesitan más repaso.</p></article>
+            <article><h3>Mezcla operaciones</h3><p>Cuando completes la tabla con soltura, usa la prueba y el contrarreloj para entrenar resultados fuera de orden.</p></article>
+            <article><h3>Repite los errores</h3><p>Dedica más intentos a las multiplicaciones que te cuestan y menos a las que ya respondes automáticamente.</p></article>
+          </div>
+
+          <h2>Ejercicios de la tabla del {numero}</h2>
+          <div className={styles.resourceLinks}>
+            <Link href="/contrarreloj">Practicar contrarreloj</Link>
+            <Link href="/prueba-tablas-de-multiplicar">Hacer una prueba mezclada</Link>
+            <Link href="/juego-memoria-multiplicaciones">Jugar al memory de multiplicaciones</Link>
+            <Link href="/tabla-pitagorica">Consultar la tabla pitagórica</Link>
+          </div>
+
+          <h2>Preguntas frecuentes sobre la tabla del {numero}</h2>
+          <div className={styles.faq}>
+            <details><summary>¿Hasta qué número se practica la tabla del {numero}?</summary><p>En esta web mostramos la tabla del {numero} del 1 al 12. El juego principal trabaja primero las operaciones del 1 al 10 y los recursos de repaso incluyen también 11 y 12.</p></details>
+            <details><summary>¿Cómo memorizar la tabla del {numero}?</summary><p>Combina consulta y recuperación activa: mira los resultados, tapa la respuesta e intenta recordarla. Después practica las operaciones en orden aleatorio.</p></details>
+            <details><summary>¿Cómo puedo practicar la tabla del {numero} de otra forma?</summary><p>Puedes usar el contrarreloj, una prueba mezclada o el juego de memoria para practicar los resultados fuera del orden habitual.</p></details>
+          </div>
+
+          <nav className={styles.bottomNav} aria-label="Recursos relacionados">
+            {numero > 1 ? <Link href={`/tabla-del-${numero - 1}`}>← Tabla del {numero - 1}</Link> : <span />}
+            <Link href="/todas-las-tablas-de-multiplicar">Todas las tablas</Link>
+            {numero < 12 ? <Link href={`/tabla-del-${numero + 1}`}>Tabla del {numero + 1} →</Link> : <span />}
+          </nav>
+        </section>
       </div>
     </>
   );
 };
 
-export async function getServerSideProps(context) {
-  const { tabla } = context.params;
-  return { props: { tabla } };
+export function getStaticPaths() {
+  return {
+    paths: Array.from({ length: 12 }, (_, i) => ({ params: { tabla: `tabla-del-${i + 1}` } })),
+    fallback: false,
+  };
+}
+
+export function getStaticProps({ params }) {
+  const match = params.tabla.match(/^tabla-del-(\d+)$/);
+  const numero = match ? Number(match[1]) : null;
+  if (!numero || numero < 1 || numero > 12) return { notFound: true };
+  return { props: { tabla: params.tabla } };
 }
 
 Tabla.propTypes = {

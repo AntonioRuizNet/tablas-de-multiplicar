@@ -1,0 +1,6 @@
+import React from "react";
+import Link from "next/link";
+import { ResourceLayout } from "../components/resources/ResourceLayout";
+import { WorksheetGenerator } from "../components/resources/WorksheetGenerator";
+import styles from "../components/resources/Resource.module.css";
+export default function Fichas(){return <ResourceLayout title="Fichas de tablas de multiplicar para imprimir" description="Genera e imprime fichas gratuitas de tablas de multiplicar. Elige tablas y cantidad de ejercicios para crear una hoja personalizada." path="/fichas-tablas-de-multiplicar"><header className={styles.hero}><h1>Fichas de tablas de multiplicar para imprimir</h1><p className={styles.lead}>Crea una ficha personalizada: selecciona las tablas, elige cuántos ejercicios quieres y genera otra combinación cuando necesites una nueva hoja.</p></header><WorksheetGenerator/><section className={styles.section}><h2>Fichas por tabla</h2><div className={styles.cards}>{Array.from({length:12},(_,i)=>i+1).map(n=><Link className={styles.cardLink} href={`/fichas/tabla-del-${n}`} key={n}><div className={styles.card}><h3>Ficha de la tabla del {n}</h3><p>Ejercicios específicos para practicar e imprimir.</p></div></Link>)}</div></section></ResourceLayout>}

@@ -5,7 +5,7 @@
   background: rgba(255, 255, 255, 0.75);
   backdrop-filter: blur(10px);
   z-index: 1000;
-  border-bottom: 4px solid #007c63;
+  border-bottom: 4px solid #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -31,14 +31,14 @@
 
 .panelTitle {
   margin: 0;
-  color: #8b5a2b;
+  color: #25313c;
 }
 
 .link {
   background: none;
   border: none;
   padding: 0;
-  color: #8b5a2b;
+  color: #25313c;
   cursor: pointer;
   font-size: 1rem;
 }
@@ -61,8 +61,8 @@
   gap: 12px;
 
   padding: 12px 14px;
-  background-color: #8b5a2b;
-  border: 3px #5a3825 solid;
+  background-color: #25313c;
+  border: 3px #63d4ce solid;
   border-radius: 14px;
   color: white;
   font-size: 1.05rem;
@@ -107,7 +107,7 @@
   border-radius: 999px;
   font-weight: 900;
   font-size: 0.92rem;
-  color: #0b3b4f;
+  color: #5c6872;
   background: rgba(255, 255, 255, 0.85);
   border: 1px solid rgba(0, 0, 0, 0.08);
   box-shadow: 0 10px 18px rgba(0, 0, 0, 0.06);

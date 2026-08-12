@@ -2,7 +2,8 @@ import React from "react";
 import Head from "next/head";
 import Link from "next/link";
 import styles from "./index.module.css";
-import { MenuTablas } from "../components/menuTablas";
+import { StaticTable } from "../components/seo/StaticTable";
+import { AppLayout } from "../components/layout/AppLayout";
 
 const SITE_URL = "https://tablasdemultiplicar.app";
 const OG_IMAGE = `${SITE_URL}/og-image.png`;
@@ -53,6 +54,15 @@ export default function Home() {
     ],
   };
 
+  const websiteJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Tablas de multiplicar",
+    url: `${SITE_URL}/`,
+    inLanguage: "es-ES",
+    description,
+  };
+
   const eduAppJsonLd = {
     "@context": "https://schema.org",
     "@type": "EducationalApplication",
@@ -89,10 +99,12 @@ export default function Home() {
         <meta name="twitter:image" content={OG_IMAGE} />
 
         {/* JSON-LD */}
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(eduAppJsonLd) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
       </Head>
 
+      <AppLayout title={title} description={description} canonical={`${SITE_URL}/`}>
       <main className={styles.main}>
         {/* HERO */}
         <header className={styles.hero}>
@@ -105,9 +117,9 @@ export default function Home() {
               </p>
 
               <div className={styles.ctaRow}>
-                <a className={styles.primaryCta} href="#elige-tabla">
+                <Link className={styles.primaryCta} href="/tabla-del-1">
                   Empezar a practicar
-                </a>
+                </Link>
                 <a className={styles.secondaryCta} href="#como-funciona">
                   Cómo funciona
                 </a>
@@ -136,19 +148,6 @@ export default function Home() {
             </div>
           </div>
         </header>
-
-        {/* SELECTOR */}
-        <section className={styles.section} id="elige-tabla">
-          <h2 className={styles.h2}>Elige una tabla de multiplicar para practicar</h2>
-          <p className={styles.p}>
-            Selecciona una tabla y resuelve multiplicaciones paso a paso. Si te equivocas, podrás revisar el historial y repetir
-            para aprender más rápido.
-          </p>
-
-          <div className={styles.selectorWrap}>
-            <MenuTablas />
-          </div>
-        </section>
 
         {/* HOW IT WORKS */}
         <section className={styles.section} id="como-funciona">
@@ -181,6 +180,17 @@ export default function Home() {
           </div>
         </section>
 
+        <section className={styles.section}>
+          <h2 className={styles.h2}>Más formas de aprender y practicar</h2>
+          <div className={styles.resourceGrid}>
+            <Link href="/contrarreloj" className={styles.resourceCard}><strong>Contrarreloj</strong><span>60 segundos de multiplicaciones mezcladas.</span></Link>
+            <Link href="/prueba-tablas-de-multiplicar" className={styles.resourceCard}><strong>Prueba</strong><span>Comprueba tu nivel con 30 operaciones.</span></Link>
+            <Link href="/diploma-tablas-de-multiplicar" className={styles.resourceCard}><strong>Diploma</strong><span>Supera el reto y consigue tu diploma.</span></Link>
+            <Link href="/tabla-pitagorica" className={styles.resourceCard}><strong>Tabla pitagórica</strong><span>Visualiza todos los productos del 1 al 12.</span></Link>
+            <Link href="/trucos-tablas-de-multiplicar" className={styles.resourceCard}><strong>Trucos</strong><span>Patrones para reducir lo que debes memorizar.</span></Link>
+          </div>
+        </section>
+
         {/* CONTENT BLOCKS (SEO) */}
         <section className={styles.section}>
           <h2 className={styles.h2}>Aprender las tablas de multiplicar</h2>
@@ -204,6 +214,14 @@ export default function Home() {
                 <strong>Tabla del 9:</strong> la suma de cifras del resultado suele dar 9 (9×7=63 → 6+3=9).
               </li>
             </ul>
+          </div>
+        </section>
+
+        <section className={styles.section} id="tablas-completas">
+          <h2 className={styles.h2}>Tablas de multiplicar del 1 al 12 completas</h2>
+          <p className={styles.p}>Consulta todas las operaciones directamente o entra en una tabla para practicarla. También puedes abrir la página con <Link href="/todas-las-tablas-de-multiplicar"><strong>todas las tablas juntas</strong></Link>.</p>
+          <div className={styles.fullTablesGrid}>
+            {TABLES.map((n) => <StaticTable key={n} number={n} compact link />)}
           </div>
         </section>
 
@@ -253,12 +271,8 @@ export default function Home() {
           </div>
         </section>
 
-        <footer className={styles.footer}>
-          <p className={styles.footerText}>
-            © {new Date().getFullYear()} Tablas de multiplicar — Practica multiplicaciones online gratis.
-          </p>
-        </footer>
       </main>
+      </AppLayout>
     </>
   );
 }

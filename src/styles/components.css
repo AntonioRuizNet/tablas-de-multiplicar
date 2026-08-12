@@ -1,5 +1,5 @@
 .keyboard li:last-child {
-  background-color: #007c63;
+  background-color: #ffffff;
   color: white;
 }
 
@@ -24,7 +24,7 @@
   left: 0;
   height: 100%;
   width: var(--highlight-width, 0); /* Ancho dinámico */
-  background-color: #007c63;
+  background-color: #ffffff;
   z-index: 0; /* Asegura que esté detrás de los hitos */
   transition: width 0.3s ease;
 }
@@ -48,5 +48,5 @@
 }
 
 .milestone.highlight {
-  background-color: #007c63;
+  background-color: #ffffff;
 }

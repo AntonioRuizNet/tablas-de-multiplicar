@@ -27,7 +27,7 @@
 .burgerLine {
   width: 20px;
   height: 2px;
-  background: #8b5a2b;
+  background: #25313c;
   border-radius: 99px;
 }
 
@@ -94,7 +94,7 @@
 .panelTitle {
   margin: 0;
   font-weight: 900;
-  color: #083042;
+  color: #25313c;
   letter-spacing: 0.2px;
 }
 
@@ -130,7 +130,7 @@
   border-radius: 14px;
   font-weight: 900;
   background: rgba(14, 165, 233, 0.12);
-  color: #0b3b4f;
+  color: #5c6872;
   transition: transform 0.12s ease;
 }
 
@@ -147,7 +147,7 @@
 .sectionTitle {
   margin: 0;
   font-weight: 900;
-  color: #083042;
+  color: #25313c;
   font-size: 0.98rem;
 }
 
@@ -168,7 +168,7 @@
   padding: 10px 0;
 
   font-weight: 900;
-  color: #0b3b4f;
+  color: #5c6872;
 
   background: rgba(255, 255, 255, 0.75);
   border: 1px solid rgba(0, 0, 0, 0.08);

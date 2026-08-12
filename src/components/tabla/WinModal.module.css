@@ -6,7 +6,7 @@
   backdrop-filter: blur(10px);
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
   z-index: 1000;
-  border-bottom: 4px solid #007c63;
+  border-bottom: 4px solid #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -24,16 +24,16 @@
 
 .panelTitle {
   margin: 0 0 6px;
-  color: #8b5a2b;
+  color: #25313c;
 }
 
 .panelSubtitle {
   margin: 0 0 12px;
-  color: #8b5a2b;
+  color: #25313c;
 }
 
 .tip {
-  border: 3px #007c63 solid;
+  border: 3px #ffffff solid;
   padding: 10px 14px;
   border-radius: 12px;
   background-color: white;
@@ -60,7 +60,7 @@
   background: none;
   border: none;
   padding: 0;
-  color: #8b5a2b;
+  color: #25313c;
   cursor: pointer;
   font-size: 1rem;
 }

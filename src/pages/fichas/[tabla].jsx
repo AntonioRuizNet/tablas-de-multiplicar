@@ -1,0 +1,8 @@
+import React from "react";
+import PropTypes from "prop-types";
+import { ResourceLayout } from "../../components/resources/ResourceLayout";
+import styles from "../../components/resources/Resource.module.css";
+export function getStaticPaths(){return {paths:Array.from({length:12},(_,i)=>({params:{tabla:`tabla-del-${i+1}`}})),fallback:false}}
+export function getStaticProps({params}){const match=params.tabla.match(/^tabla-del-(\d+)$/); const numero=match?Number(match[1]):null; if(!numero||numero<1||numero>12)return{notFound:true};return{props:{numero}}}
+export default function FichaTabla({numero}){const exercises=Array.from({length:24},(_,i)=>({a:numero,b:(i*5%12)+1}));return <ResourceLayout title={`Ficha de la tabla del ${numero} para imprimir`} description={`Ficha gratuita de la tabla del ${numero} con 24 ejercicios para imprimir y practicar multiplicaciones.`} path={`/fichas/tabla-del-${numero}`} breadcrumbs={[{name:"Inicio",href:"/"},{name:"Fichas",href:"/fichas-tablas-de-multiplicar"},{name:`Tabla del ${numero}`,href:`/fichas/tabla-del-${numero}`}]}><header className={styles.hero}><h1>Ficha de la tabla del {numero}</h1><p className={styles.lead}>Resuelve estas 24 operaciones. Puedes imprimir la página y repetirla después intentando mejorar el tiempo y los aciertos.</p></header><div className={styles.sheet}><p>Nombre: __________________________ Fecha: ______________</p><div className={styles.sheetGrid}>{exercises.map((q,i)=><div className={styles.sheetItem} key={i}>{i+1}. {q.a} × {q.b} = __________</div>)}</div></div><div className={`${styles.actions} ${styles.noPrint}`}><button className={styles.button} onClick={()=>window.print()}>Imprimir ficha</button></div></ResourceLayout>}
+FichaTabla.propTypes={numero:PropTypes.number.isRequired};

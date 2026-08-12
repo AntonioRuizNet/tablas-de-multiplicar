@@ -5,6 +5,7 @@ import { AppHeader } from "./AppHeader";
 import { AppSidebar } from "./AppSidebar";
 import { MobileDrawer } from "./MobileDrawer";
 import PropTypes from "prop-types";
+import Link from "next/link";
 
 export function AppLayout({
   children,
@@ -47,6 +48,19 @@ export function AppLayout({
         <MobileDrawer isOpen={isDrawerOpen} onClose={closeDrawer}>
           <AppSidebar onNavigate={closeDrawer} />
         </MobileDrawer>
+
+        <footer className={styles.footer}>
+          <div>
+            <strong>Tablasdemultiplicar.app</strong>
+            <p>Recursos gratuitos para aprender y practicar multiplicaciones.</p>
+          </div>
+          <nav aria-label="Enlaces informativos">
+            <Link href="/metodologia">Metodología</Link>
+            <Link href="/para-profesores">Profesores</Link>
+            <Link href="/para-padres">Familias</Link>
+            <Link href="/sobre-nosotros">Sobre nosotros</Link>
+          </nav>
+        </footer>
       </div>
     </>
   );

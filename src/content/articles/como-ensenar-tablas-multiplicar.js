@@ -1,0 +1,30 @@
+const article = {
+  slug: "como-ensenar-tablas-multiplicar",
+  title: "Cómo enseñar las tablas de multiplicar paso a paso",
+  description: "Guía práctica para enseñar las tablas de multiplicar con comprensión, patrones, práctica gradual y actividades útiles para niños de primaria.",
+  date: "2026-08-12",
+  updatedAt: "2026-08-12",
+  keywords: ["como enseñar las tablas de multiplicar", "enseñar tablas de multiplicar", "metodo tablas de multiplicar", "tablas de multiplicar primaria"],
+  content: [
+    { type: "p", text: "Enseñar las tablas de multiplicar funciona mejor cuando se combinan comprensión y práctica. Memorizar los productos es útil porque libera esfuerzo mental en operaciones posteriores, pero esa fluidez se construye con más facilidad cuando el niño sabe qué significa cada multiplicación." },
+    { type: "p", text: "Una secuencia clara evita dos extremos: quedarse siempre contando objetos o exigir respuestas rápidas antes de que exista una base sólida. El objetivo es avanzar desde lo concreto hacia el cálculo mental." },
+    { type: "h2", text: "Paso 1: representar grupos iguales" },
+    { type: "p", text: "Empieza con objetos, dibujos o puntos organizados en grupos. Para 3 × 4 pueden dibujarse tres grupos de cuatro elementos. Después escribe la suma 4 + 4 + 4 y, finalmente, la multiplicación 3 × 4 = 12." },
+    { type: "h2", text: "Paso 2: aprovechar las tablas fáciles" },
+    { type: "p", text: "Las tablas del 1, 2, 5 y 10 permiten introducir patrones sencillos. A partir de ellas se pueden deducir otros productos: si un niño sabe 5 × 7 = 35, puede calcular 6 × 7 sumando otro 7." },
+    { type: "h2", text: "Paso 3: enseñar relaciones entre operaciones" },
+    { type: "ul", items: ["Usar dobles para la tabla del 2.", "Usar el doble del doble para la tabla del 4.", "Relacionar 6 × n con 5 × n + n.", "Relacionar 8 × n con duplicar tres veces.", "Usar 10 × n + 2 × n para algunos productos de la tabla del 12."] },
+    { type: "h2", text: "Paso 4: practicar en orden y después mezclar" },
+    { type: "p", text: "Al principio, el orden ayuda a descubrir patrones. Sin embargo, una tabla no está dominada hasta que el alumno puede responder a operaciones aisladas. Cuando la secuencia ya resulta familiar, mezcla las preguntas para que tenga que recuperar cada resultado por sí mismo." },
+    { type: "h2", text: "Paso 5: trabajar más los errores que los aciertos" },
+    { type: "p", text: "No todas las operaciones necesitan el mismo número de repeticiones. Conviene registrar cuáles provocan dudas y recuperarlas con mayor frecuencia. Si 7 × 8 cuesta y 2 × 5 sale automáticamente, dedicar el mismo tiempo a ambas no es eficiente." },
+    { type: "h2", text: "Paso 6: usar sesiones breves" },
+    { type: "p", text: "Una práctica corta y frecuente permite volver varias veces sobre la información sin saturar al alumno. Cinco o diez minutos bien enfocados pueden ser más útiles que una sesión larga basada únicamente en repetir." },
+    { type: "h2", text: "Cómo comprobar si una tabla está realmente aprendida" },
+    { type: "ul", items: ["Responde operaciones en orden aleatorio.", "Mantiene una precisión alta sin apoyarse en una tabla visible.", "Puede explicar alguna estrategia cuando no recuerda un resultado.", "Recupera los productos también después de varios días sin practicar esa tabla concreta."] },
+    { type: "h2", text: "Conclusión" },
+    { type: "p", text: "Enseñar las tablas paso a paso significa construir significado, descubrir patrones, practicar de forma gradual y volver sobre los errores. La rapidez llega después. Cuando el proceso respeta ese orden, la memorización deja de ser una tarea aislada y se integra en la comprensión matemática." },
+  ],
+};
+
+export default article;

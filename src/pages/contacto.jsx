@@ -1,0 +1,4 @@
+import React from "react";
+import { ResourceLayout } from "../components/resources/ResourceLayout";
+import styles from "../components/resources/Resource.module.css";
+export default function Contacto(){return <ResourceLayout title="Contacto" description="Información de contacto para comunicar sugerencias o incidencias relacionadas con Tablasdemultiplicar.app." path="/contacto"><header className={styles.hero}><h1>Contacto</h1><p className={styles.lead}>Si quieres comunicar una incidencia, sugerir un recurso educativo o proponer una mejora, utiliza el canal de contacto que publiques para el proyecto.</p></header><div className={styles.notice}>Añade aquí tu correo de contacto definitivo antes de publicar esta página, por ejemplo: <strong>hola@tablasdemultiplicar.app</strong>.</div></ResourceLayout>}

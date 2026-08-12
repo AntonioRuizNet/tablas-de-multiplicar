@@ -12,8 +12,8 @@
 }
 
 .stats {
-  background-color: #8b5a2b;
-  border: 5px #5a3825 solid;
+  background-color: #25313c;
+  border: 5px #63d4ce solid;
   border-radius: 5px;
   width: 100%;
   padding: 2px 5px;
@@ -30,18 +30,18 @@
 }
 
 .link {
-  color: #8b5a2b;
+  color: #25313c;
   cursor: pointer;
 }
 
 .tablasHeader {
   display: flex;
   justify-content: space-between;
-  color: #8b5a2b;
+  color: #25313c;
 }
 
 .statsv2 {
-  color: #8b5a2b;
+  color: #25313c;
   width: 250px;
   border-bottom-right-radius: 15px;
   padding: 5px;
@@ -53,8 +53,8 @@
     align-items: center;
     gap: 5px;
     & .level-number {
-      background-color: #8b5a2b;
-      border: 3px #5a3825 solid;
+      background-color: #25313c;
+      border: 3px #63d4ce solid;
       border-radius: 5px;
       width: 100px;
       text-align: center;
@@ -64,7 +64,7 @@
     & .level-range {
       width: 100%;
       & .points {
-        border: 3px #8b5a2b solid;
+        border: 3px #25313c solid;
         color: white;
         font-size: 0.7rem;
         text-align: center;
@@ -72,7 +72,7 @@
         width: 100%;
         height: 20px;
         & .points-fill {
-          background-color: #5a3825; /* color de la barra de stats */
+          background-color: #63d4ce; /* color de la barra de stats */
           height: 100%;
 
           transition: width 0.3s ease;
@@ -97,8 +97,8 @@
       justify-content: space-between;
       gap: 15px;
       padding: 15px 30px;
-      background-color: #8b5a2b;
-      border: 3px #5a3825 solid;
+      background-color: #25313c;
+      border: 3px #63d4ce solid;
       border-radius: 15px;
       color: white;
       font-size: 1.5rem;
@@ -122,7 +122,7 @@
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25); /* Sombra */
   transition: transform 0.5s ease; /* Animación para aparecer */
   z-index: 1000; /* Asegura que esté sobre otros elementos */
-  border-bottom: 4px solid #007c63;
+  border-bottom: 4px solid #ffffff;
   box-sizing: border-box;
 }
 
@@ -166,11 +166,11 @@
 
 /* Div que simula la mesa de madera */
 .wooden-table {
-  background-color: #5a3825; /* Fondo de marrón oscuro */
+  background-color: #63d4ce; /* Fondo de marrón oscuro */
   background-image: repeating-linear-gradient(
     45deg,
-    #8b5a2b,
-    /* Marrón claro */ #8b5a2b 5px,
+    #25313c,
+    /* Marrón claro */ #25313c 5px,
     /* Líneas finas */ transparent 2px,
     transparent 4px
   );
@@ -194,11 +194,11 @@
   right: -50vw; /* Comienza fuera de la pantalla */
   padding: 20px;
   background-color: white;
-  color: #8d0000;
+  color: #ee6464;
   font-size: 1.3rem;
   font-weight: bold;
   border-radius: 10px;
-  border: 4px solid #8d0000;
+  border: 4px solid #ee6464;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
   animation: slideInOut 2s ease-in-out;
 }
@@ -225,7 +225,7 @@
 }
 
 .randomTip {
-  border: 3px #007c63 solid;
+  border: 3px #ffffff solid;
   padding: 10px 25px;
   border-radius: 15px;
   background-color: white;

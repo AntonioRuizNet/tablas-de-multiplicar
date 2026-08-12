@@ -19,7 +19,7 @@
   left: 0;
   height: 100%;
   width: var(--highlight-width, 0);
-  background-color: #007c63;
+  background-color: #ffffff;
   z-index: 0;
   transition: width 0.3s ease;
 }
@@ -43,5 +43,5 @@
 }
 
 .highlight {
-  background-color: #007c63;
+  background-color: #ffffff;
 }

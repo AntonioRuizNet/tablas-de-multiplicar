@@ -1,0 +1,5 @@
+import React from "react";
+import { ResourceLayout } from "../components/resources/ResourceLayout";
+import { TimedPractice } from "../components/resources/TimedPractice";
+import styles from "../components/resources/Resource.module.css";
+export default function Contrarreloj(){return <ResourceLayout title="Tablas de multiplicar contrarreloj" description="Practica las tablas de multiplicar contrarreloj durante 60 segundos y comprueba cuántas operaciones resuelves correctamente." path="/contrarreloj"><header className={styles.hero}><h1>Tablas de multiplicar contrarreloj</h1><p className={styles.lead}>Selecciona las tablas que quieres entrenar y responde tantas multiplicaciones como puedas en 60 segundos. Primero busca precisión; la velocidad llegará con la práctica.</p></header><TimedPractice/><section className={styles.section}><h2>Cómo mejorar tu velocidad</h2><p>Practica sesiones cortas y repite especialmente las operaciones que te cuestan. Alternar tablas fáciles con difíciles ayuda a mantener el ritmo sin depender del orden memorizado.</p></section></ResourceLayout>}

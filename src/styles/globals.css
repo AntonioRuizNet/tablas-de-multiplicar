@@ -1,41 +1,50 @@
 html,
-body {
-  margin: 0;
-  padding: 0;
+body { margin: 0; padding: 0; }
+
+:root {
+  --ink: #25313c;
+  --muted: #66727d;
+  --paper: #fffdfa;
+  --surface: #ffffff;
+  --line: #e8e5df;
+  --turquoise: #63d4ce;
+  --turquoise-soft: #dff7f4;
+  --pink: #ff8fa5;
+  --pink-soft: #ffe5eb;
+  --yellow: #ffc86b;
+  --yellow-soft: #fff0cf;
+  --green: #62c987;
+  --red: #ee6464;
+  --shadow: 0 12px 32px rgba(55, 67, 78, .09);
+  --shadow-soft: 0 7px 20px rgba(55, 67, 78, .07);
+  --radius-xl: 30px;
+  --radius-lg: 22px;
+  --radius-md: 16px;
 }
+
+* { box-sizing: border-box; }
 
 body {
   font-family: "Poppins", sans-serif;
-  background-color: #ececec;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 10% 4%, rgba(99,212,206,.17), transparent 19rem),
+    radial-gradient(circle at 92% 20%, rgba(255,143,165,.13), transparent 20rem),
+    #faf9f6;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* Evita el reset agresivo de `all: unset` en <a> para no romper accesibilidad */
-a {
-  color: inherit;
-  text-decoration: none;
-}
+a { color: inherit; text-decoration: none; }
+button, input, select, textarea { font: inherit; }
+button, a { -webkit-tap-highlight-color: transparent; }
+::selection { background: var(--yellow-soft); }
 
-/* Mensaje de orientación horizontal en móviles */
 @media screen and (max-width: 800px) and (orientation: landscape) {
   body::before {
-    content: "Por favor, gira tu dispositivo a modo vertical 📱";
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100svh;
-    background: rgba(0, 0, 0, 0.95);
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-    text-align: center;
-    padding: 2rem;
-    font-size: 1.5rem;
+    content: "Gira tu dispositivo a modo vertical para jugar mejor 📱";
+    position: fixed; inset: 0; z-index: 9999; display: flex;
+    justify-content: center; align-items: center; padding: 2rem;
+    background: #25313c; color: white; text-align: center; font-size: 1.25rem;
   }
-
-  body * {
-    visibility: hidden;
-  }
+  body * { visibility: hidden; }
 }
