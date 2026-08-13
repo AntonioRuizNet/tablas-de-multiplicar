@@ -12,6 +12,7 @@ export default function Perfil() {
   const [name, setName] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [nameBusy, setNameBusy] = useState(false);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -38,14 +39,34 @@ export default function Perfil() {
     e.preventDefault();
     setMessage("");
     setError("");
-    const response = await fetch("/api/profile", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name }) });
-    const result = await response.json();
-    if (!response.ok) {
-      setError(result.error || "No se ha podido guardar.");
-      return;
+    setNameBusy(true);
+    try {
+      const response = await fetch("/api/profile", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name }),
+      });
+      const result = await response.json();
+      if (!response.ok) {
+        setError(result.error || "No se ha podido guardar el nombre.");
+        return;
+      }
+      setUser(result.user);
+      const nextNameChangeAt = result.user.nameChangedAt
+        ? new Date(new Date(result.user.nameChangedAt).getTime() + 30 * 24 * 60 * 60 * 1000).toISOString()
+        : null;
+      setData((current) => current ? {
+        ...current,
+        user: result.user,
+        nameChange: { canChange: !nextNameChangeAt, nextChangeAt: nextNameChangeAt },
+      } : current);
+      setMessage(result.message || "Nombre actualizado correctamente.");
+    } catch (requestError) {
+      console.error(requestError);
+      setError("No se ha podido conectar con el servidor. Inténtalo de nuevo.");
+    } finally {
+      setNameBusy(false);
     }
-    setUser(result.user);
-    setMessage("Perfil actualizado.");
   }
 
   async function changePassword(e) {
@@ -107,8 +128,10 @@ export default function Perfil() {
               <h2 className={styles.sectionTitle}>Datos de la cuenta</h2>
               {message && <p className={styles.success}>{message}</p>}
               {error && <p className={styles.error}>{error}</p>}
-              <label className={styles.label}>Nombre<input className={styles.input} value={name} onChange={(e) => setName(e.target.value)} /></label>
-              <button className={styles.button}>Guardar nombre</button>
+              <label className={styles.label}>Nombre de usuario<input className={styles.input} value={name} maxLength={30} onChange={(e) => setName(e.target.value)} /></label>
+              <p className={styles.helpText}>Debe ser único y respetuoso. Solo puedes cambiarlo una vez cada 30 días.</p>
+              {data?.nameChange?.canChange === false && data?.nameChange?.nextChangeAt ? <p className={styles.helpText}>Próximo cambio disponible: <strong>{new Date(data.nameChange.nextChangeAt).toLocaleDateString("es-ES")}</strong>.</p> : null}
+              <button className={styles.button} disabled={nameBusy}>{nameBusy ? "Guardando…" : "Guardar nombre"}</button>
             </form>
 
             <form className={styles.form} onSubmit={changePassword}>

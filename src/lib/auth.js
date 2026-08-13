@@ -10,7 +10,7 @@ export function normalizeEmail(value) {
 }
 
 export function publicUser(row) {
-  return row ? { id: row.id, email: row.email, name: row.name || "", role: row.role } : null;
+  return row ? { id: row.id, email: row.email, name: row.name || "", role: row.role, nameChangedAt: row.name_changed_at || null } : null;
 }
 
 export function parseCookies(req) {
@@ -68,7 +68,7 @@ export async function getSessionUser(req) {
   if (!token) return null;
   const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
   const { rows } = await db.query(
-    `SELECT u.id, u.email, u.name, u.role
+    `SELECT u.id, u.email, u.name, u.role, u.name_changed_at
      FROM auth_sessions s
      JOIN users u ON u.id = s.user_id
      WHERE s.token_hash = $1 AND s.expires_at > NOW()

@@ -38,10 +38,10 @@ export default function Registro() {
       <div className={styles.page}>
         <section className={styles.card}>
           <h1 className={styles.title}>Crear cuenta</h1>
-          <p className={styles.subtitle}>Tu progreso quedará guardado en tu cuenta.</p>
+          <p className={styles.subtitle}>Tu progreso quedará guardado en tu cuenta. Elige un nombre único y respetuoso.</p>
           <form className={styles.form} onSubmit={submit}>
             {error && <p className={styles.error}>{error}</p>}
-            <label className={styles.label}>Nombre<input className={styles.input} name="name" autoComplete="name" value={form.name} onChange={change} /></label>
+            <label className={styles.label}>Nombre de usuario<input className={styles.input} name="name" autoComplete="nickname" minLength={2} maxLength={30} required value={form.name} onChange={change} /></label>
             <label className={styles.label}>Email<input className={styles.input} name="email" type="email" autoComplete="email" required value={form.email} onChange={change} /></label>
             <label className={styles.label}>Contraseña<input className={styles.input} name="password" type="password" minLength="8" autoComplete="new-password" required value={form.password} onChange={change} /></label>
             <label className={styles.label}>Repite la contraseña<input className={styles.input} name="confirm" type="password" minLength="8" autoComplete="new-password" required value={form.confirm} onChange={change} /></label>
