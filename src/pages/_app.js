@@ -7,6 +7,7 @@ import { PersistGate } from "redux-persist/integration/react";
 
 import { store, persistor } from "../redux/store";
 import { AchievementsToastStack } from "../components/AchievementChip/AchievementsToastStack";
+import { AuthProvider } from "../components/auth/AuthContext";
 
 import "../styles/globals.css";
 
@@ -18,6 +19,7 @@ const GA_ID = "G-H0C71YDJBT";
 export default function App({ Component, pageProps }) {
   return (
     <Provider store={store}>
+      <AuthProvider>
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
         <meta name="theme-color" content="#63d4ce" />
@@ -49,6 +51,7 @@ export default function App({ Component, pageProps }) {
       <PersistGate loading={null} persistor={persistor}>
         <AchievementsToastStack />
       </PersistGate>
+      </AuthProvider>
     </Provider>
   );
 }

@@ -8,21 +8,16 @@ import styles from "./[tabla].module.css";
 import { MenuKeyboard } from "../components/keyboard";
 import { MenuTablas } from "../components/menuTablas";
 import { randomTip } from "../constants";
-import { updateResume, updateOperationTimer, runningOperationTimer, updateStatus } from "../redux/reducers/userConfigSlice";
+import { updateResume, updateOperationTimer, runningOperationTimer, updateStatus, hydrateUserConfig } from "../redux/reducers/userConfigSlice";
 
-import { StatsBar } from "../components/tabla/StatsBar";
 import { TableBoard } from "../components/tabla/TableBoard";
 import { WinModal } from "../components/tabla/WinModal";
-import { HistoryModal } from "../components/tabla/HistoryModal";
 import { SideMenu } from "../components/SideMenu/SideMenu";
-import { AchievementsModal } from "../components/tabla/AchievementsModal";
-import { unlockMany } from "../redux/reducers/achievementsSlice";
-import { ProfileModal } from "../components/profile/ProfileModal";
-import { TableNav } from "../components/TableNav/TableNav";
-import { TipsButton, TipsModal } from "../components/TipsModal/TipsModal";
-import { ExplanationButton, ExplanationModal } from "../components/tabla/ExplanationModal";
+import { unlockMany, hydrateAchievements } from "../redux/reducers/achievementsSlice";
+import { useAuth } from "../components/auth/AuthContext";
 import Link from "next/link";
 import { Breadcrumbs } from "../components/seo/Breadcrumbs";
+import { AppHeader } from "../components/layout/AppHeader";
 
 const SITE_URL = "https://tablasdemultiplicar.app";
 const OG_IMAGE = `${SITE_URL}/og-image.png`;
@@ -51,7 +46,9 @@ function useRandomTip() {
 
 export const Tabla = ({ tabla }) => {
   const dispatch = useDispatch();
+  const { user } = useAuth();
   const hasAwardedRef = useRef(false);
+  const practiceSessionRef = useRef(null);
 
   const segundos = useSelector((state) => state.aplicationConfig.userConfig.operationTimer);
   const resume = useSelector((state) => state.aplicationConfig.userConfig.resume);
@@ -64,14 +61,13 @@ export const Tabla = ({ tabla }) => {
   const [answers, setAnswers] = useState({});
   const [showError, setShowError] = useState(false);
   const [isWinOpen, setIsWinOpen] = useState(false);
-  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isAchievementsOpen, setIsAchievementsOpen] = useState(false);
-  const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const [isTipsOpen, setIsTipsOpen] = useState(false);
-  const [isExplOpen, setIsExplOpen] = useState(false);
 
   const safeResume = Array.isArray(resume) ? resume : [];
+
+  const newPracticeSession = () => {
+    practiceSessionRef.current = typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : null;
+  };
 
   // Temporizador global de la operación
   useEffect(() => {
@@ -88,11 +84,9 @@ export const Tabla = ({ tabla }) => {
     setAnswers({});
     setShowError(false);
     setIsWinOpen(false);
-    setIsHistoryOpen(false);
     setIsMenuOpen(false);
-    setIsAchievementsOpen(false);
-    setIsProfileOpen(false);
     hasAwardedRef.current = false;
+    newPracticeSession();
   }, [dispatch, tabla]);
 
   const handleReset = () => {
@@ -101,6 +95,7 @@ export const Tabla = ({ tabla }) => {
     setIsWinOpen(false);
     // si vuelves a empezar en la misma tabla, permite volver a premiar al completar
     hasAwardedRef.current = false;
+    newPracticeSession();
   };
 
   const pointsForTable = useMemo(() => {
@@ -157,16 +152,44 @@ export const Tabla = ({ tabla }) => {
     if (ids.length) dispatch(unlockMany(ids));
   };
 
-  const finalizeTableAndAward = (resumeSnapshot) => {
+  const persistOperation = async ({ multiplier, isCorrect, responseTime }) => {
+    if (!user || !practiceSessionRef.current) return;
+    const response = await fetch("/api/progress/operation", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ sessionId: practiceSessionRef.current, tableNumber: numero, multiplier, isCorrect, responseTime }),
+    });
+    if (!response.ok) throw new Error("No se ha podido guardar el progreso.");
+  };
+
+  const finalizeTableAndAward = async (resumeSnapshot) => {
     if (hasAwardedRef.current) return;
     hasAwardedRef.current = true;
 
-    unlockOnTableComplete(resumeSnapshot);
-    dispatch(updateStatus(pointsForTable));
+    if (!user || !practiceSessionRef.current) {
+      unlockOnTableComplete(resumeSnapshot);
+      dispatch(updateStatus(pointsForTable));
+      return;
+    }
+
+    const response = await fetch("/api/progress/complete", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ sessionId: practiceSessionRef.current }),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      hasAwardedRef.current = false;
+      throw new Error(data.error || "No se ha podido guardar la tabla completada.");
+    }
+    if (data.progress) {
+      dispatch(hydrateUserConfig(data.progress.userConfig));
+      dispatch(hydrateAchievements(data.progress.unlocked));
+    }
   };
 
-  const handleKey = (value) => {
-    if (isWinOpen || isHistoryOpen || isMenuOpen || isAchievementsOpen || isProfileOpen) return;
+  const handleKey = async (value) => {
+    if (isWinOpen || isMenuOpen) return;
 
     if (value === "Enviar") {
       const current = Number(answers[active] || NaN);
@@ -175,8 +198,10 @@ export const Tabla = ({ tabla }) => {
       if (current === expected) {
         const nextRow = { table: tabla, operation: `${numero}x${active}`, state: "Bien", time: segundos };
 
-        // 1) guarda en redux
+        // Guarda de forma optimista en Redux y, si hay sesión iniciada, también en PostgreSQL.
         dispatch(updateResume(nextRow));
+        try { await persistOperation({ multiplier: active, isCorrect: true, responseTime: segundos }); }
+        catch (error) { console.error(error); }
 
         if (active < 10) {
           setActive((p) => p + 1);
@@ -184,12 +209,15 @@ export const Tabla = ({ tabla }) => {
           // ✅ IMPORTANTE: calcula logros con snapshot que incluye la 10ª operación
           const nextResumeSnapshot = [...safeResume, nextRow];
 
-          finalizeTableAndAward(nextResumeSnapshot);
+          try { await finalizeTableAndAward(nextResumeSnapshot); }
+          catch (error) { console.error(error); }
           setIsWinOpen(true);
         }
       } else {
         const nextRow = { table: tabla, operation: `${numero}x${active}`, state: "Mal", time: segundos };
         dispatch(updateResume(nextRow));
+        try { await persistOperation({ multiplier: active, isCorrect: false, responseTime: segundos }); }
+        catch (error) { console.error(error); }
 
         setShowError(true);
         setTimeout(() => setShowError(false), 2000);
@@ -254,6 +282,7 @@ export const Tabla = ({ tabla }) => {
         />
       </Head>
 
+      <AppHeader />
       <div className={styles.root}>
         <div className={styles.breadcrumbTop}>
           <Breadcrumbs items={[
@@ -265,30 +294,13 @@ export const Tabla = ({ tabla }) => {
         <section className={styles.gameViewport} aria-label={`Práctica interactiva de la tabla del ${numero}`}>
         <div className={styles.wall}>
           <div className={styles.header}>
-            <StatsBar />
-
+            <span />
             <SideMenu
               isOpen={isMenuOpen}
               onOpen={() => setIsMenuOpen(true)}
               onClose={() => setIsMenuOpen(false)}
-              onOpenHistory={() => {
-                setIsMenuOpen(false);
-                setIsHistoryOpen(true);
-              }}
-              currentTabla={tabla}
-              onOpenAchievements={() => setIsAchievementsOpen(true)}
-              onOpenProfile={() => setIsProfileOpen(true)}
             />
           </div>
-
-          <div className={styles.actions}>
-            <TableNav numero={numero} />
-            <TipsButton onClick={() => setIsTipsOpen(true)} />
-            <ExplanationButton onClick={() => setIsExplOpen(true)} />
-          </div>
-
-          <TipsModal isOpen={isTipsOpen} onClose={() => setIsTipsOpen(false)} numero={numero} />
-          <ExplanationModal isOpen={isExplOpen} onClose={() => setIsExplOpen(false)} numero={numero} />
 
           <h1 className={styles.title}>Aprende la {tabla.replaceAll("-", " ")}</h1>
 
@@ -304,14 +316,6 @@ export const Tabla = ({ tabla }) => {
         <WinModal isOpen={isWinOpen} onClose={() => setIsWinOpen(false)} points={pointsForTable} tip={tip}>
           <MenuTablas callbackButton={handleAwardAndClose} />
         </WinModal>
-
-        <HistoryModal
-          isOpen={isHistoryOpen}
-          onClose={() => setIsHistoryOpen(false)}
-          rows={[...safeResume].slice(-200).reverse()}
-        />
-        <AchievementsModal isOpen={isAchievementsOpen} onClose={() => setIsAchievementsOpen(false)} />
-        <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} />
         </section>
 
         <section className={styles.seoContent}>

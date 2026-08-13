@@ -3,6 +3,8 @@ import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
 import styles from "./ProfileModal.module.css";
 import { rangos } from "../../constants";
+import Link from "next/link";
+import { useAuth } from "../auth/AuthContext";
 
 function getTableNumber(table) {
   return Number(String(table).match(/\d+/)?.[0] || "");
@@ -13,6 +15,7 @@ function round1(n) {
 }
 
 export function ProfileModal({ isOpen, onClose }) {
+  const { user } = useAuth();
   const userConfig = useSelector((state) => state.aplicationConfig.userConfig);
   const resume = useSelector((state) => state.aplicationConfig.userConfig.resume || []);
   const unlocked = useSelector((state) => state.achievements?.unlocked || {});
@@ -97,7 +100,7 @@ export function ProfileModal({ isOpen, onClose }) {
           <div>
             <h2 className={styles.title}>Perfil</h2>
             <p className={styles.subtitle}>Tu progreso en Tablas de multiplicar</p>
-            <small className={styles.subtitle}>Estos se eliminarán periódicamente</small>
+            <small className={styles.subtitle}>{user ? `Cuenta: ${user.email}` : "Inicia sesión para guardar este progreso en tu cuenta."}</small>
           </div>
           <button type="button" className={styles.close} onClick={onClose} aria-label="Cerrar perfil">
             ✕
@@ -172,6 +175,10 @@ export function ProfileModal({ isOpen, onClose }) {
               ))}
             </ul>
           )}
+        </div>
+
+        <div className={styles.section}>
+          <Link href={user ? "/perfil" : "/login"}>{user ? "Gestionar mi cuenta" : "Iniciar sesión o crear una cuenta"}</Link>
         </div>
       </div>
     </div>

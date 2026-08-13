@@ -11,17 +11,12 @@ export function StatsBar() {
   const width = puntos > 100 ? puntos - nivel * 100 : puntos;
 
   return (
-    <div className={styles.stats} aria-label="Progreso">
-      <div className={styles.level}>
-        <div className={styles.levelAndRange}>
-          <div className={styles.levelNumber}>{nivel}</div>
-          <div className={styles.rangeName}>{rangos[rango] || rangos[rangos.length - 1]}</div>
-        </div>
-        <div className={styles.levelRange}>
-          <div className={styles.points} aria-hidden="true">
-            <div className={styles.pointsFill} style={{ width: `${Math.min(Math.max(width, 0), 100)}%` }} />
-          </div>
-        </div>
+    <div className={styles.stats} aria-label={`Nivel ${nivel}, ${puntos} puntos`}>
+      <strong className={styles.level}>Nivel {nivel}</strong>
+      <span className={styles.rangeName}>{rangos[rango] || rangos[rangos.length - 1]}</span>
+      <span className={styles.pointsLabel}>{puntos} pts</span>
+      <div className={styles.points} aria-hidden="true">
+        <div className={styles.pointsFill} style={{ width: `${Math.min(Math.max(width, 0), 100)}%` }} />
       </div>
     </div>
   );

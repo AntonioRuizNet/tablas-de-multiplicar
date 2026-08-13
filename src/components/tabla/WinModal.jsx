@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 import PropTypes from "prop-types";
 import styles from "./WinModal.module.css";
 
@@ -20,9 +21,8 @@ export function WinModal({ isOpen, onClose, points, tip, children }) {
         {children}
 
         <div className={styles.actions}>
-          <button type="button" className={styles.link} onClick={onClose}>
-            Cerrar
-          </button>
+          <Link href="/todas-las-tablas-de-multiplicar" className={styles.link}>Ver todas las tablas</Link>
+          <button type="button" className={styles.link} onClick={onClose}>Cerrar</button>
         </div>
       </div>
     </div>

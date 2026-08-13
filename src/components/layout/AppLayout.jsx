@@ -18,7 +18,6 @@ export function AppLayout({
   const openDrawer = () => setIsDrawerOpen(true);
   const closeDrawer = () => setIsDrawerOpen(false);
 
-  // Cerrar con ESC
   useEffect(() => {
     if (!isDrawerOpen) return;
     const onKeyDown = (e) => e.key === "Escape" && closeDrawer();
@@ -50,8 +49,8 @@ export function AppLayout({
         </MobileDrawer>
 
         <footer className={styles.footer}>
-          <div>
-            <strong>Tablasdemultiplicar.app</strong>
+          <div className={styles.footerBrand}>
+            <img src="/og-image.png" alt="Tablas de multiplicar" className={styles.footerLogo} />
             <p>Recursos gratuitos para aprender y practicar multiplicaciones.</p>
           </div>
           <nav aria-label="Enlaces informativos">

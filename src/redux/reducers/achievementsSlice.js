@@ -24,8 +24,11 @@ const achievementsSlice = createSlice({
     resetAchievements: (state) => {
       state.unlocked = {};
     },
+    hydrateAchievements: (state, action) => {
+      state.unlocked = action.payload || {};
+    },
   },
 });
 
-export const { unlockAchievement, unlockMany, resetAchievements } = achievementsSlice.actions;
+export const { unlockAchievement, unlockMany, resetAchievements, hydrateAchievements } = achievementsSlice.actions;
 export default achievementsSlice.reducer;

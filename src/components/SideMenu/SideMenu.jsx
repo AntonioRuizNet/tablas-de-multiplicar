@@ -1,25 +1,29 @@
 import React, { useEffect } from "react";
 import PropTypes from "prop-types";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import styles from "./SideMenu.module.css";
+import { APP_NAV_LINKS } from "../layout/AppSidebar";
 
-const TABLES = Array.from({ length: 12 }, (_, i) => i + 1);
+function isLinkActive(pathname, href) {
+  if (href === "/") return pathname === "/";
+  if (href === "/todas-las-tablas-de-multiplicar" && /^\/tabla-del-\d+$/.test(pathname)) return true;
+  if (href === "/articulos") return pathname === href || pathname.startsWith(`${href}/`);
+  return pathname === href;
+}
 
-export function SideMenu({ isOpen, onOpen, onClose, onOpenHistory, onOpenAchievements, onOpenProfile, currentTabla }) {
-  // Cerrar con ESC
+export function SideMenu({ isOpen, onOpen, onClose }) {
+  const router = useRouter();
+
   useEffect(() => {
     if (!isOpen) return;
-
-    const onKeyDown = (e) => {
-      if (e.key === "Escape") onClose();
-    };
-
+    const onKeyDown = (e) => { if (e.key === "Escape") onClose(); };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [isOpen, onClose]);
 
   return (
-    <>
+    <div className={styles.mobileOnly}>
       <button
         type="button"
         className={styles.burger}
@@ -33,69 +37,33 @@ export function SideMenu({ isOpen, onOpen, onClose, onOpenHistory, onOpenAchieve
         <span className={styles.burgerLine} />
       </button>
 
-      {/* Overlay cristal */}
       <div className={`${styles.overlay} ${isOpen ? styles.overlayOpen : ""}`} onClick={onClose} aria-hidden={!isOpen} />
 
-      {/* Panel lateral */}
       <aside id="side-menu" className={`${styles.panel} ${isOpen ? styles.panelOpen : ""}`} aria-hidden={!isOpen}>
         <div className={styles.panelHeader}>
           <p className={styles.panelTitle}>Menú</p>
-          <button type="button" className={styles.close} onClick={onClose} aria-label="Cerrar menú">
-            ✕
-          </button>
+          <button type="button" className={styles.close} onClick={onClose} aria-label="Cerrar menú">✕</button>
         </div>
 
-        <nav className={styles.nav} aria-label="Navegación">
-          <button
-            type="button"
-            className={styles.itemButton}
-            onClick={() => {
-              onClose();
-              onOpenProfile();
-            }}
-          >
-            Perfil
-          </button>
-          <button type="button" className={styles.itemButton} onClick={onOpenHistory}>
-            Historial
-          </button>
-          <button
-            type="button"
-            className={styles.itemButton}
-            onClick={() => {
-              onClose();
-              onOpenAchievements();
-            }}
-          >
-            Logros
-          </button>
-
-          <div className={styles.divider} />
-
-          <p className={styles.sectionTitle}>Ir a la tabla</p>
-
-          <div className={styles.tablesGrid}>
-            {TABLES.map((n) => {
-              const href = `/tabla-del-${n}`;
-              const isActive = currentTabla === `tabla-del-${n}`;
-              return (
-                <Link
-                  key={n}
-                  href={href}
-                  className={`${styles.tableLink} ${isActive ? styles.tableLinkActive : ""}`}
-                  onClick={onClose}
-                  aria-label={`Ir a la tabla del ${n}`}
-                >
-                  {n}
-                </Link>
-              );
-            })}
-          </div>
+        <nav className={styles.nav} aria-label="Navegación principal">
+          {APP_NAV_LINKS.map(([href, icon, label]) => {
+            const active = isLinkActive(router.asPath.split("?")[0], href);
+            return (
+              <Link
+                key={href}
+                href={href}
+                className={`${styles.menuLink} ${active ? styles.menuLinkActive : ""}`}
+                onClick={onClose}
+                aria-current={active ? "page" : undefined}
+              >
+                <span className={styles.menuIcon}>{icon}</span>
+                <span>{label}</span>
+              </Link>
+            );
+          })}
         </nav>
-
-        <p className={styles.hint}>Consejo: empieza por 1, 2, 5 y 10.</p>
       </aside>
-    </>
+    </div>
   );
 }
 
@@ -103,8 +71,4 @@ SideMenu.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onOpen: PropTypes.func.isRequired,
   onClose: PropTypes.func.isRequired,
-  onOpenHistory: PropTypes.func.isRequired,
-  onOpenAchievements: PropTypes.func.isRequired,
-  onOpenProfile: PropTypes.func.isRequired,
-  currentTabla: PropTypes.string.isRequired,
 };

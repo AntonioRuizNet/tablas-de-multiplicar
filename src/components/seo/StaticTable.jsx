@@ -3,9 +3,9 @@ import Link from "next/link";
 import PropTypes from "prop-types";
 import styles from "./Seo.module.css";
 
-export function StaticTable({ number, compact = false, link = false }) {
+export function StaticTable({ number, compact = false, link = false, large = false }) {
   const content = (
-    <div className={`${styles.staticTable} ${compact ? styles.compactTable : ""}`}>
+    <div className={`${styles.staticTable} ${compact ? styles.compactTable : ""} ${large ? styles.largeTable : ""}`}>
       <h3>Tabla del {number}</h3>
       <ol>
         {Array.from({ length: 12 }, (_, i) => i + 1).map((multiplier) => (
@@ -25,4 +25,5 @@ StaticTable.propTypes = {
   number: PropTypes.number.isRequired,
   compact: PropTypes.bool,
   link: PropTypes.bool,
+  large: PropTypes.bool,
 };
