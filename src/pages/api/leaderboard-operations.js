@@ -24,9 +24,9 @@ export default async function handler(req, res) {
         GROUP BY u.id,u.name HAVING COUNT(o.id)>0 ORDER BY operations DESC,name ASC LIMIT 10
       `);
     }
-    return res.status(200).json({ ok: true, users: result.rows });
+    return res.status(200).json({ ok:true, users:result.rows });
   } catch (error) {
     console.error("operations leaderboard error", error);
-    return res.status(500).json({ ok: false, users: [] });
+    return res.status(500).json({ ok:false, users:[] });
   }
 }

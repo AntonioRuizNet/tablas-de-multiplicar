@@ -48,3 +48,36 @@ button, a { -webkit-tap-highlight-color: transparent; }
   }
   body * { visibility: hidden; }
 }
+
+/* Impresión del diploma: las reglas globales deben vivir fuera de CSS Modules. */
+@media print {
+  html,
+  body {
+    width: 297mm;
+    height: 210mm;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #fff !important;
+  }
+
+  body * {
+    visibility: hidden !important;
+  }
+
+  [aria-label="Diploma de las tablas de multiplicar"],
+  [aria-label="Diploma de las tablas de multiplicar"] * {
+    visibility: visible !important;
+  }
+
+  [aria-label="Diploma de las tablas de multiplicar"] {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 297mm !important;
+    height: 210mm !important;
+    margin: 0 !important;
+    z-index: 2147483647;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}
+
