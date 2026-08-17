@@ -30,7 +30,17 @@ const userConfigSlice = createSlice({
       state.userConfig.rango = Math.floor(nivel / 2);
     },
     hydrateUserConfig: (state, action) => {
-      state.userConfig = { ...defaultUserConfig, ...(action.payload || {}), operationTimer: 0 };
+      const payload = action.payload || {};
+      const puntos = payload.puntos ?? payload.points ?? defaultUserConfig.puntos;
+      state.userConfig = {
+        ...defaultUserConfig,
+        ...payload,
+        puntos: Number(puntos || 0),
+        nivel: Number(payload.nivel || 0),
+        rango: Number(payload.rango || 0),
+        operationTimer: 0,
+      };
+      delete state.userConfig.points;
     },
     resetUserConfig: (state) => { state.userConfig = { ...defaultUserConfig }; },
   },

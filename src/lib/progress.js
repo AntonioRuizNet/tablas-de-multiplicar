@@ -30,9 +30,9 @@ export async function loadProgress(userId, client = db) {
   const p = progress.rows[0] || { points: 0, level: 0, rank: 0 };
   return {
     userConfig: {
-      points: p.points,
-      nivel: p.level,
-      rango: p.rank,
+      puntos: Number(p.points || 0),
+      nivel: Number(p.level || 0),
+      rango: Number(p.rank || 0),
       rate: 1,
       operationTimer: 0,
       componentActive: null,
@@ -60,5 +60,5 @@ export async function updatePoints(userId, delta, client = db) {
     `UPDATE user_progress SET points = $2, level = $3, rank = $4, updated_at = NOW() WHERE user_id = $1`,
     [userId, points, level, rank]
   );
-  return { points, nivel: level, rango: rank };
+  return { puntos: points, nivel: level, rango: rank };
 }
