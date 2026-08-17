@@ -1,6 +1,8 @@
 import { db } from "../../../lib/db";
 import { requireUser } from "../../../lib/auth";
-import { loadProgress, pointsForTable, updatePoints } from "../../../lib/progress";
+import { loadProgress, updatePoints } from "../../../lib/progress";
+import { tableAward } from "../../../lib/progression";
+import { achievementBonus } from "../../../lib/achievementRewards";
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
@@ -33,15 +35,19 @@ export default async function handler(req, res) {
     }
 
     const tableNumber = Number(session.table_number);
-    const award = pointsForTable(tableNumber);
     const correctRows = ops.rows.filter((o) => o.is_correct);
+    const wrongCount = ops.rows.length - correctRows.length;
     const avgTime = correctRows.length ? correctRows.reduce((a,o) => a + Number(o.response_time_seconds || 0), 0) / correctRows.length : 0;
-    const isPerfect = ops.rows.every((o) => o.is_correct) && correctRows.length === 10;
+    const isPerfect = wrongCount === 0 && correctRows.length === 10;
+    const priorResult = await client.query(
+      `SELECT COUNT(*)::int AS count FROM practice_sessions WHERE user_id=$1 AND table_number=$2 AND completed_at IS NOT NULL`, [user.id, tableNumber]
+    );
+    const baseAward = tableAward({ tableNumber, correct: correctRows.length, wrong: wrongCount, priorCompletions: priorResult.rows[0].count });
+
     await client.query(
       `UPDATE practice_sessions SET completed_at=NOW(), points_awarded=$2, correct_count=$3, wrong_count=$4, average_time_seconds=$5 WHERE id=$1`,
-      [sessionId, award, correctRows.length, ops.rows.length-correctRows.length, avgTime]
+      [sessionId, baseAward, correctRows.length, wrongCount, avgTime]
     );
-    const pointState = await updatePoints(user.id, award, client);
 
     const totals = await client.query(
       `SELECT
@@ -59,12 +65,23 @@ export default async function handler(req, res) {
     if (completed >= 50) ids.push("complete_50_tables");
     if (totalCorrect >= 50) ids.push("get_50_correct");
     if (totalCorrect >= 100) ids.push("get_100_correct");
+
+    let bonusAward = 0;
+    const newlyUnlocked = [];
     for (const id of ids) {
-      await client.query(`INSERT INTO user_achievements (user_id, achievement_id) VALUES ($1,$2) ON CONFLICT (user_id, achievement_id) DO NOTHING`, [user.id,id]);
+      const inserted = await client.query(
+        `INSERT INTO user_achievements (user_id, achievement_id) VALUES ($1,$2)
+         ON CONFLICT (user_id, achievement_id) DO NOTHING RETURNING achievement_id`, [user.id,id]
+      );
+      if (inserted.rowCount) { newlyUnlocked.push(id); bonusAward += achievementBonus(id); }
     }
+
+    const totalAward = baseAward + bonusAward;
+    await client.query(`UPDATE practice_sessions SET points_awarded=$2 WHERE id=$1`, [sessionId, totalAward]);
+    const pointState = await updatePoints(user.id, totalAward, client);
     await client.query("COMMIT");
     const progress = await loadProgress(user.id);
-    return res.status(200).json({ ok:true, pointsAwarded:award, pointState, progress });
+    return res.status(200).json({ ok:true, pointsAwarded:totalAward, basePoints:baseAward, achievementBonus:bonusAward, newlyUnlocked, pointState, progress });
   } catch (error) {
     await client.query("ROLLBACK").catch(() => {});
     console.error(error);

@@ -4,6 +4,7 @@ import styles from "./Resource.module.css";
 import { MenuKeyboard } from "../keyboard";
 import { TableSelector } from "./TableSelector";
 import { updateResume } from "../../redux/reducers/userConfigSlice";
+import { useActivityReward } from "./useActivityReward";
 
 function makeQuestions(selected, count) {
   return Array.from({ length: count }, (_, i) => {
@@ -15,6 +16,8 @@ function makeQuestions(selected, count) {
 
 export function Quiz({ diploma = false }) {
   const dispatch = useDispatch();
+  const { awardActivity, reward } = useActivityReward();
+  const [rewarded, setRewarded] = useState(false);
   const totalQuestions = diploma ? 40 : 30;
   const [selected, setSelected] = useState([1]);
   const [phase, setPhase] = useState("setup");
@@ -23,6 +26,7 @@ export function Quiz({ diploma = false }) {
   const [value, setValue] = useState("");
   const [score, setScore] = useState(0);
   const [name, setName] = useState("");
+  const [results, setResults] = useState([]);
 
   const toggle = (n) => setSelected((current) => current.includes(n) ? current.filter((v) => v !== n) : [...current, n]);
 
@@ -32,6 +36,8 @@ export function Quiz({ diploma = false }) {
     setCurrentIndex(0);
     setScore(0);
     setValue("");
+    setResults([]);
+    setRewarded(false);
     setPhase("playing");
   };
 
@@ -42,6 +48,9 @@ export function Quiz({ diploma = false }) {
     if (!current || !value) return;
     const isCorrect = Number(value) === current.result;
     if (isCorrect) setScore((n) => n + 1);
+    const resultRow = { table: current.a, multiplier: current.b, answer: Number(value), time: 0 };
+    const finalResults = [...results, resultRow];
+    setResults(finalResults);
     dispatch(updateResume({
       table: `tabla-del-${current.a}`,
       operation: `${current.a}x${current.b}`,
@@ -49,7 +58,13 @@ export function Quiz({ diploma = false }) {
       time: 0,
     }));
     setValue("");
-    if (currentIndex + 1 >= questions.length) setPhase("finished");
+    if (currentIndex + 1 >= questions.length) {
+      setPhase("finished");
+      if (!rewarded) {
+        setRewarded(true);
+        awardActivity(diploma ? "diploma" : "quiz", { operations: finalResults }).catch(console.error);
+      }
+    }
     else setCurrentIndex((n) => n + 1);
   };
 
@@ -70,6 +85,7 @@ export function Quiz({ diploma = false }) {
     return <div className={styles.practiceBox}>
       {diploma && percentage >= 90 ? <div className={styles.sheet}><h2>Diploma de las tablas de multiplicar</h2><p>Se concede a <strong>{name || "________________"}</strong> por superar la prueba con un {percentage}% de aciertos.</p></div> : null}
       <p className={styles.result}>Has acertado {score} de {totalQuestions}: {percentage}%.</p>
+      {reward !== null ? <p className={styles.reward}>+{reward} puntos</p> : null}
       {diploma && percentage < 90 ? <p>Necesitas al menos un 90% para conseguir el diploma. Puedes volver a intentarlo cuando quieras.</p> : null}
       <div className={`${styles.resultActions} ${styles.noPrint}`}>
         <button className={styles.button} type="button" onClick={() => setPhase("setup")}>Elegir tablas y repetir</button>

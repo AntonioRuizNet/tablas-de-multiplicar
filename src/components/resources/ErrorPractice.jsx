@@ -5,6 +5,7 @@ import styles from "./Resource.module.css";
 import { MenuKeyboard } from "../keyboard";
 import { TableSelector } from "./TableSelector";
 import { updateResume } from "../../redux/reducers/userConfigSlice";
+import { useActivityReward } from "./useActivityReward";
 
 function unresolvedMistakes(resume) {
   const latest = new Map();
@@ -19,6 +20,7 @@ function unresolvedMistakes(resume) {
 
 export function ErrorPractice() {
   const dispatch = useDispatch();
+  const { awardActivity, reward } = useActivityReward();
   const resume = useSelector((state) => state.aplicationConfig.userConfig.resume);
   const allMistakes = useMemo(() => unresolvedMistakes(resume), [resume]);
   const [selected, setSelected] = useState([1]);
@@ -39,6 +41,7 @@ export function ErrorPractice() {
     const isCorrect = Number(value) === expected;
     dispatch(updateResume({ table: `tabla-del-${a}`, operation: current.operation, state: isCorrect ? "Bien" : "Mal", time: 0 }));
     if (isCorrect) {
+      awardActivity("error_practice", { operations: [{ table: a, multiplier: b, answer: Number(value), time: 0 }] }).catch(console.error);
       setMessage("¡Correcto! Esta operación sale de tu lista de errores.");
     } else {
       setMessage(`Todavía no: ${a} × ${b} = ${expected}. Volverá a aparecer hasta que la resuelvas bien.`);
@@ -74,5 +77,6 @@ export function ErrorPractice() {
     <div className={styles.answerDisplay} aria-live="polite">{value || "_"}</div>
     <div className={styles.keyboardWrap}><MenuKeyboard callback={handleKey} /></div>
     {message ? <p className={styles.result}>{message}</p> : null}
+    {reward !== null ? <p className={styles.reward}>+{reward} puntos</p> : null}
   </div>;
 }

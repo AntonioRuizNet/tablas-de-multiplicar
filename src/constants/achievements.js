@@ -72,6 +72,39 @@ export const ACHIEVEMENTS = [
     background: "rgba(245, 158, 11, 0.12)",
   },
 
+  {
+    id: "timed_20",
+    icon: "⏱️",
+    title: "Rayo matemático",
+    description: "Consigue al menos 20 aciertos en un contrarreloj.",
+    border: "rgba(245, 158, 11, 0.5)",
+    background: "rgba(245, 158, 11, 0.12)",
+  },
+  {
+    id: "quiz_90",
+    icon: "🧠",
+    title: "Prueba sobresaliente",
+    description: "Consigue al menos un 90% en la prueba de 30 operaciones.",
+    border: "rgba(99, 102, 241, 0.45)",
+    background: "rgba(99, 102, 241, 0.12)",
+  },
+  {
+    id: "diploma_earned",
+    icon: "🎓",
+    title: "Diploma conseguido",
+    description: "Supera el reto del diploma con al menos un 90% de aciertos.",
+    border: "rgba(168, 85, 247, 0.45)",
+    background: "rgba(168, 85, 247, 0.12)",
+  },
+  {
+    id: "memory_completed",
+    icon: "🧠",
+    title: "Memoria matemática",
+    description: "Completa una partida del juego de memoria.",
+    border: "rgba(34, 197, 94, 0.45)",
+    background: "rgba(34, 197, 94, 0.12)",
+  },
+
   // Tablas 1..12
   ...Array.from({ length: 12 }, (_, i) => i + 1).map((n) => ({
     id: `complete_table_${n}`,

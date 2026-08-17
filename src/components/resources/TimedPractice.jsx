@@ -4,6 +4,7 @@ import styles from "./Resource.module.css";
 import { MenuKeyboard } from "../keyboard";
 import { updateResume } from "../../redux/reducers/userConfigSlice";
 import { TableSelector } from "./TableSelector";
+import { useActivityReward } from "./useActivityReward";
 
 const ALL_TABLES = Array.from({ length: 12 }, (_, i) => i + 1);
 
@@ -15,6 +16,8 @@ function randomOperation(tables) {
 
 export function TimedPractice() {
   const dispatch = useDispatch();
+  const { awardActivity, reward } = useActivityReward();
+  const [rewarded, setRewarded] = useState(false);
   const [selected, setSelected] = useState([1]);
   const [phase, setPhase] = useState("setup");
   const [seconds, setSeconds] = useState(60);
@@ -22,6 +25,7 @@ export function TimedPractice() {
   const [value, setValue] = useState("");
   const [correct, setCorrect] = useState(0);
   const [wrong, setWrong] = useState(0);
+  const [results, setResults] = useState([]);
 
   const running = phase === "playing";
 
@@ -35,6 +39,12 @@ export function TimedPractice() {
     if (running && seconds === 0) setPhase("finished");
   }, [running, seconds]);
 
+  useEffect(() => {
+    if (phase !== "finished" || rewarded) return;
+    setRewarded(true);
+    awardActivity("timed", { operations: results }).catch(console.error);
+  }, [phase, rewarded, awardActivity, results]);
+
   const toggle = (n) => setSelected((current) => current.includes(n) ? current.filter((v) => v !== n) : [...current, n]);
 
   const start = () => {
@@ -42,8 +52,10 @@ export function TimedPractice() {
     setSeconds(60);
     setCorrect(0);
     setWrong(0);
+    setResults([]);
     setValue("");
     setOperation(randomOperation(selected));
+    setRewarded(false);
     setPhase("playing");
   };
 
@@ -51,6 +63,7 @@ export function TimedPractice() {
     if (!running || !value) return;
     const isCorrect = Number(value) === operation.answer;
     if (isCorrect) setCorrect((n) => n + 1); else setWrong((n) => n + 1);
+    setResults((current) => [...current, { table: operation.table, multiplier: operation.multiplier, answer: Number(value), time: 0 }]);
     dispatch(updateResume({
       table: `tabla-del-${operation.table}`,
       operation: `${operation.table}x${operation.multiplier}`,
@@ -74,6 +87,7 @@ export function TimedPractice() {
   if (phase === "finished") {
     return <div className={styles.practiceBox}>
       <p className={styles.result}>Has conseguido {correct} aciertos y {wrong} errores en 60 segundos.</p>
+      {reward !== null ? <p className={styles.reward}>+{reward} puntos</p> : null}
       <div className={styles.resultActions}>
         <button className={styles.button} type="button" onClick={() => setPhase("setup")}>Elegir tablas y jugar otra vez</button>
       </div>

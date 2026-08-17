@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { useAuth } from "../components/auth/AuthContext";
 import { AppLayout } from "../components/layout/AppLayout";
 import styles from "../styles/auth.module.css";
+import { ACHIEVEMENTS_BY_ID } from "../constants/achievements";
 
 export default function Perfil() {
   const { user, loading, logout, setUser } = useAuth();
@@ -157,6 +158,27 @@ export default function Perfil() {
             <div className={styles.stat}><span>Tiempo medio</span><strong>{stats?.averageTime ?? 0}s</strong></div>
             <div className={styles.stat}><span>Tablas completadas</span><strong>{stats?.completedTables ?? 0}</strong></div>
           </div>
+
+
+
+          <section className={styles.achievementsSection}>
+            <div className={styles.achievementsHeading}>
+              <div><h2 className={styles.sectionTitle}>Mis logros</h2><p className={styles.helpText}>Los logros desbloqueados aparecen aquí y también en tu perfil público.</p></div>
+              <strong>{stats?.achievements ?? 0}</strong>
+            </div>
+            {data?.progress?.unlocked && Object.keys(data.progress.unlocked).length ? (
+              <div className={styles.achievementsGrid}>
+                {Object.entries(data.progress.unlocked).map(([id, info]) => {
+                  const achievement = ACHIEVEMENTS_BY_ID[id];
+                  if (!achievement) return null;
+                  return <article className={styles.achievementCard} key={id}>
+                    <span className={styles.achievementIcon}>{achievement.icon}</span>
+                    <div><strong>{achievement.title}</strong><p>{achievement.description}</p>{info?.unlockedAt ? <small>Conseguido el {new Date(info.unlockedAt).toLocaleDateString("es-ES")}</small> : null}</div>
+                  </article>;
+                })}
+              </div>
+            ) : <p className={styles.helpText}>Todavía no has desbloqueado ningún logro. Completa tablas y retos para conseguirlos.</p>}
+          </section>
 
           <div className={styles.links}><button type="button" onClick={exit} className={styles.button}>Cerrar sesión</button></div>
         </section>

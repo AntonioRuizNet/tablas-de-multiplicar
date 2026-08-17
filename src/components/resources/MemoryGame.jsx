@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./Resource.module.css";
 import { TableSelector } from "./TableSelector";
+import { useActivityReward } from "./useActivityReward";
 
 function shuffle(list) { return [...list].sort(() => Math.random() - 0.5); }
 
@@ -29,6 +30,8 @@ function makeDeck(tables) {
 }
 
 export function MemoryGame() {
+  const { awardActivity, reward } = useActivityReward();
+  const [rewarded, setRewarded] = useState(false);
   const [selected, setSelected] = useState([1]);
   const [phase, setPhase] = useState("setup");
   const [deck, setDeck] = useState([]);
@@ -43,8 +46,17 @@ export function MemoryGame() {
     setOpen([]);
     setDone([]);
     setMoves(0);
+    setRewarded(false);
     setPhase("playing");
   };
+
+
+  useEffect(() => {
+    const complete = phase === "playing" && deck.length > 0 && done.length === deck.length / 2;
+    if (!complete || rewarded) return;
+    setRewarded(true);
+    awardActivity("memory", { moves }).catch(console.error);
+  }, [phase, deck.length, done.length, moves, rewarded, awardActivity]);
 
   const choose = (card) => {
     if (open.length === 2 || open.some((c) => c.id === card.id) || done.includes(card.pair)) return;
@@ -69,7 +81,7 @@ export function MemoryGame() {
       const visible = open.some((c) => c.id === card.id) || done.includes(card.pair);
       return <button key={card.id} type="button" className={styles.memoryCard} onClick={() => choose(card)} disabled={done.includes(card.pair)} aria-label={visible ? card.label : "Carta oculta"}>{visible ? card.label : "?"}</button>;
     })}</div>
-    {done.length && done.length === deck.length / 2 ? <p className={styles.result}>¡Has completado el juego!</p> : null}
+    {done.length && done.length === deck.length / 2 ? <><p className={styles.result}>¡Has completado el juego!</p>{reward !== null ? <p className={styles.reward}>+{reward} puntos</p> : null}</> : null}
     <div className={styles.actions}>
       <button className={`${styles.button} ${styles.buttonSecondary}`} type="button" onClick={() => setPhase("setup")}>Elegir otras tablas</button>
     </div>

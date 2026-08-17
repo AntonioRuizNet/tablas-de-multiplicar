@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import Link from "next/link";
 import styles from "./Leaderboard.module.css";
 
 export function OperationsLeaderboard() {
@@ -47,8 +48,8 @@ export function OperationsLeaderboard() {
             <tbody>
               {users.map((user, index) => (
                 <tr key={user.id}>
-                  <td>{index + 1}</td>
-                  <td title={user.name}>{user.name}</td>
+                  <td><span className={styles.position}>{index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : index + 1}</span></td>
+                  <td title={user.name}><Link className={styles.userLink} href={`/jugador/${user.id}`}>{user.name}</Link></td>
                   <td>{user.operations}</td>
                 </tr>
               ))}

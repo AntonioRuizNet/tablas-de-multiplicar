@@ -58,7 +58,7 @@ export const randomTip = [
   "Cuando practicas un poco cada día, tu cerebro se vuelve más rápido. ¡Es como un músculo que se entrena! 🧠💪",
   "Las tablas te ayudan a pensar más rápido y con más seguridad. ¡Eso te convierte en un auténtico crack de los números! 😄",
   "Aprender jugando es la mejor forma de aprender. ¡Sigue practicando y divirtiéndote al mismo tiempo! 🎈",
-  "Cada multiplicación correcta es un punto para ti. ¡Suma puntos y conviértete en el mejor! ⭐️",
+  "Completa actividades, gana puntos y sube de nivel mientras mejoras con las tablas. ⭐️",
   "Las tablas de multiplicar te acompañarán toda la vida. ¡Cuanto mejor las aprendas ahora, más fácil será todo después! 🚀",
   "No importa si tardas un poco, lo importante es no parar. ¡Cada intento cuenta! ⏳",
   "Las matemáticas también son creatividad. Usa tu imaginación para recordar mejor las tablas. 🎨",

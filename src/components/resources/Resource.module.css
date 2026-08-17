@@ -7,3 +7,4 @@
 .allTablesGrid{grid-template-columns:repeat(4,minmax(0,1fr))}
 @media(max-width:760px){.allTablesGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:560px){.allTablesGrid{grid-template-columns:1fr}}
+.reward{margin:8px 0;font-weight:900;color:#2f817b;font-size:1.05rem}

@@ -62,6 +62,7 @@ export const Tabla = ({ tabla }) => {
   const [showError, setShowError] = useState(false);
   const [isWinOpen, setIsWinOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [awardedPoints, setAwardedPoints] = useState(0);
 
   const safeResume = Array.isArray(resume) ? resume : [];
 
@@ -85,6 +86,7 @@ export const Tabla = ({ tabla }) => {
     setShowError(false);
     setIsWinOpen(false);
     setIsMenuOpen(false);
+    setAwardedPoints(0);
     hasAwardedRef.current = false;
     newPracticeSession();
   }, [dispatch, tabla]);
@@ -93,6 +95,7 @@ export const Tabla = ({ tabla }) => {
     setActive(1);
     setAnswers({});
     setIsWinOpen(false);
+    setAwardedPoints(0);
     // si vuelves a empezar en la misma tabla, permite volver a premiar al completar
     hasAwardedRef.current = false;
     newPracticeSession();
@@ -169,6 +172,7 @@ export const Tabla = ({ tabla }) => {
     if (!user || !practiceSessionRef.current) {
       unlockOnTableComplete(resumeSnapshot);
       dispatch(updateStatus(pointsForTable));
+      setAwardedPoints(pointsForTable);
       return;
     }
 
@@ -182,6 +186,7 @@ export const Tabla = ({ tabla }) => {
       hasAwardedRef.current = false;
       throw new Error(data.error || "No se ha podido guardar la tabla completada.");
     }
+    setAwardedPoints(Number(data.pointsAwarded || pointsForTable));
     if (data.progress) {
       dispatch(hydrateUserConfig(data.progress.userConfig));
       dispatch(hydrateAchievements(data.progress.unlocked));
@@ -313,7 +318,7 @@ export const Tabla = ({ tabla }) => {
 
         {showError && <div className={styles.toast}>¡Incorrecta!</div>}
 
-        <WinModal isOpen={isWinOpen} onClose={() => setIsWinOpen(false)} points={pointsForTable} tip={tip}>
+        <WinModal isOpen={isWinOpen} onClose={() => setIsWinOpen(false)} points={awardedPoints || pointsForTable} tip={tip}>
           <MenuTablas callbackButton={handleAwardAndClose} />
         </WinModal>
         </section>

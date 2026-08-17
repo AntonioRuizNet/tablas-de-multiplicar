@@ -1,3 +1,4 @@
+import { calcProgression } from "../../lib/progression";
 import { createSlice } from "@reduxjs/toolkit";
 
 const defaultUserConfig = {
@@ -24,10 +25,10 @@ const userConfigSlice = createSlice({
       const scaled = action.payload;
       const nuevosPuntos = (state.userConfig.puntos + scaled) * state.userConfig.rate;
       const puntosFinales = Math.floor(nuevosPuntos);
-      const nivel = Math.floor(puntosFinales / 100) || 0;
+      const { level, rank } = calcProgression(puntosFinales);
       state.userConfig.puntos = puntosFinales;
-      state.userConfig.nivel = nivel;
-      state.userConfig.rango = Math.floor(nivel / 2);
+      state.userConfig.nivel = level;
+      state.userConfig.rango = rank;
     },
     hydrateUserConfig: (state, action) => {
       const payload = action.payload || {};
