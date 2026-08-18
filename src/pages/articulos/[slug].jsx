@@ -24,6 +24,18 @@ function renderBlock(block, index) {
   if (block.type === "p") return <p key={index}>{block.text}</p>;
   if (block.type === "ul") return <ul key={index}>{block.items.map((item) => <li key={item}>{item}</li>)}</ul>;
   if (block.type === "ol") return <ol key={index}>{block.items.map((item) => <li key={item}>{item}</li>)}</ol>;
+  if (block.type === "links") {
+    return (
+      <ul key={index}>
+        {block.items.map((item) => (
+          <li key={item.href}>
+            <Link href={item.href}>{item.text}</Link>
+            {item.description ? `: ${item.description}.` : "."}
+          </li>
+        ))}
+      </ul>
+    );
+  }
   return null;
 }
 
