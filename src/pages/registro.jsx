@@ -18,10 +18,15 @@ export default function Registro() {
     e.preventDefault();
     if (form.password !== form.confirm) return setError("Las contraseñas no coinciden.");
     setBusy(true); setError("");
-    try { await register(form); router.push("/perfil"); }
+    try {
+      await register(form);
+      router.push(typeof router.query.next === "string" ? router.query.next : "/perfil");
+    }
     catch (err) { setError(err.message); }
     finally { setBusy(false); }
   }
+
+  const loginHref = typeof router.query.next === "string" ? `/login?next=${encodeURIComponent(router.query.next)}` : "/login";
 
   return <AppLayout title="Crear cuenta | Tablas de multiplicar" description="Crea una cuenta para guardar tu progreso en las tablas de multiplicar.">
     <Head><meta name="robots" content="noindex,follow" /></Head>
@@ -36,7 +41,7 @@ export default function Registro() {
         <label className={styles.label}>Repite la contraseña<input className={styles.input} name="confirm" type="password" minLength="8" autoComplete="new-password" required value={form.confirm} onChange={change} /></label>
         <button className={styles.button} disabled={busy}>{busy ? "Creando…" : "Crear cuenta"}</button>
       </form>
-      <div className={styles.links}><Link href="/login">Ya tengo cuenta</Link></div>
+      <div className={styles.links}><Link href={loginHref}>Ya tengo cuenta</Link></div>
     </section></div>
   </AppLayout>;
 }
