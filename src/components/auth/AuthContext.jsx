@@ -31,8 +31,8 @@ export function AuthProvider({ children }) {
 
   useEffect(() => { refresh(); }, [refresh]);
 
-  const login = useCallback(async (email, password) => {
-    const response = await fetch("/api/auth/login", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({email,password}) });
+  const login = useCallback(async (identifier, password) => {
+    const response = await fetch("/api/auth/login", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({identifier,password}) });
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || "No se ha podido iniciar sesión.");
     applyPayload(data); return data.user;
