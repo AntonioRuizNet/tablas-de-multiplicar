@@ -114,13 +114,13 @@ export default function RetoPage() {
 
           {data.isOwner && <section className={styles.card}>
             <div className={styles.sectionHeader}><div><span className={styles.eyebrow}>Resultados</span><h2>Seguimiento del reto</h2></div><span className={data.closed ? styles.closedBadge : styles.activeBadge}>{data.closed ? "Cerrado" : "Activo"}</span></div>
-            <div className={styles.tableWrap}><table><thead><tr><th>Alumno</th><th>Estado</th><th>Aciertos</th><th>Nota</th><th>Tiempo</th></tr></thead><tbody>
+            {(data.students || []).length ? <div className={styles.tableWrap}><table><thead><tr><th>Alumno</th><th>Estado</th><th>Aciertos</th><th>Nota</th><th>Tiempo</th></tr></thead><tbody>
               {(data.students || []).map((student) => {
                 const total = Number(student.correct_count || 0) + Number(student.wrong_count || 0);
                 const accuracy = student.accuracy == null ? "—" : `${student.accuracy}%`;
                 return <tr key={student.id}><td>{student.name || "Jugador"}</td><td>{student.completed_at ? "Completado" : student.started_at ? "En curso" : "Pendiente"}</td><td>{student.completed_at ? `${student.correct_count}/${total}` : "—"}</td><td>{accuracy}</td><td>{formatDuration(student.duration_seconds)}</td></tr>;
               })}
-            </tbody></table></div>
+            </tbody></table></div> : <p>Todavía no hay alumnos en este aula. Comparte el código del aula o el enlace del reto para empezar a recibir resultados.</p>}
             {!!data.hardest?.length && <div className={styles.hardest}><h3>Operaciones que más cuestan</h3><div className={styles.pills}>{data.hardest.map((item) => <span key={`${item.table_number}-${item.multiplier}`}>{item.table_number} × {item.multiplier} · {item.errors} fallo{Number(item.errors) === 1 ? "" : "s"}</span>)}</div></div>}
           </section>}
 
