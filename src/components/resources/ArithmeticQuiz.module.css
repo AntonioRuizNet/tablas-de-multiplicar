@@ -1,0 +1,52 @@
+.grid {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:16px;
+}
+.card {
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:6px;
+  min-height:150px;
+  padding:22px;
+  border:1px solid var(--line);
+  border-radius:22px;
+  background:#fff;
+  box-shadow:var(--shadow-soft);
+  cursor:pointer;
+  text-align:left;
+  transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease;
+}
+.card:hover {
+  transform:translateY(-3px);
+  box-shadow:var(--shadow);
+}
+.levelNumber {
+  display:inline-flex;
+  align-items:center;
+  min-height:34px;
+  padding:5px 11px;
+  margin-bottom:4px;
+  border-radius:999px;
+  font-size:1.28rem;
+  line-height:1;
+  font-weight:950;
+  letter-spacing:-.025em;
+}
+.levelName {
+  color:var(--ink);
+  font-size:1.08rem;
+  line-height:1.25;
+}
+.description {
+  color:#65727b;
+  line-height:1.5;
+}
+.addition .levelNumber { background:#dff7f3;color:#24756f; }
+.addition .card:hover { border-color:#9edfd9; }
+.subtraction .levelNumber { background:#ffe5ec;color:#ae4965; }
+.subtraction .card:hover { border-color:#efb5c4; }
+.division .levelNumber { background:#ece8ff;color:#5e4fb0; }
+.division .card:hover { border-color:#c6bcf3; }
+@media(max-width:640px){.grid{grid-template-columns:1fr}.card{min-height:0}}
