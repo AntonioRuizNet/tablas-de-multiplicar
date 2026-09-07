@@ -10,7 +10,15 @@ export function normalizeEmail(value) {
 }
 
 export function publicUser(row) {
-  return row ? { id: row.id, email: row.email, name: row.name || "", role: row.role, nameChangedAt: row.name_changed_at || null } : null;
+  return row ? {
+    id: row.id,
+    email: row.email,
+    name: row.name || "",
+    role: row.role,
+    avatarIcon: row.avatar_icon || null,
+    avatarColor: row.avatar_color || null,
+    nameChangedAt: row.name_changed_at || null,
+  } : null;
 }
 
 export function parseCookies(req) {
@@ -42,7 +50,6 @@ export function setSessionCookie(res, token, expiresAt) {
   );
 }
 
-
 export function setRecoveryCookie(res, token, expiresAt) {
   const secure = process.env.NODE_ENV === "production" ? "; Secure" : "";
   const maxAge = Math.max(0, Math.floor((expiresAt.getTime() - Date.now()) / 1000));
@@ -68,7 +75,7 @@ export async function getSessionUser(req) {
   if (!token) return null;
   const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
   const { rows } = await db.query(
-    `SELECT u.id, u.email, u.name, u.role, u.name_changed_at
+    `SELECT u.id, u.email, u.name, u.role, u.avatar_icon, u.avatar_color, u.name_changed_at
      FROM auth_sessions s
      JOIN users u ON u.id = s.user_id
      WHERE s.token_hash = $1 AND s.expires_at > NOW()
