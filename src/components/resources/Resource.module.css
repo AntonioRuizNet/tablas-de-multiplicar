@@ -22,12 +22,8 @@
 .diplomaDetails{display:flex;justify-content:center;gap:16px;flex-wrap:wrap;font-size:clamp(.54rem,.95vw,.74rem);font-weight:750;color:#6f7a82}.diplomaDetails span{padding:5px 10px;border-radius:999px;background:#f6f5f1}
 .diplomaFooter{position:absolute;left:6.5%;right:6.5%;bottom:5.3%;display:flex;align-items:end;justify-content:space-between}.diplomaSignature{display:grid;text-align:left}.diplomaSignature span{font-size:clamp(.48rem,.85vw,.68rem);color:#879098}.diplomaSignature strong{margin-top:3px;padding-top:4px;border-top:1px solid #cbd5d3;font-size:clamp(.58rem,1vw,.78rem);color:#51606a}.diplomaMiniMark{width:clamp(30px,4vw,42px);height:clamp(30px,4vw,42px);display:grid;place-items:center;border-radius:13px;background:var(--turquoise);font-size:clamp(1rem,2vw,1.45rem);font-weight:950;color:#fff;transform:rotate(5deg)}
 .diplomaCongrats{margin:16px 0 4px;color:#52606b;font-weight:700}
-
 @media(max-width:700px){.diplomaPrint{aspect-ratio:auto;min-height:520px}.diplomaInner{padding:68px 28px 62px}.diplomaStats{gap:14px}.diplomaStat{min-width:0}.diplomaCopy{margin:14px auto 16px}.diplomaName{width:88%}}
-
 @page{size:A4 landscape;margin:0}
+@media print{.diplomaPrint{position:fixed;inset:0;width:297mm;height:210mm;max-width:none;margin:0;border-radius:0;border:0;box-shadow:none;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}.noPrint{display:none!important}}
 
-@media print{
-  .diplomaPrint{position:fixed;inset:0;width:297mm;height:210mm;max-width:none;margin:0;border-radius:0;border:0;box-shadow:none;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
-  .noPrint{display:none!important}
-}
+.gameIcon{font-size:1.7rem;margin-bottom:12px;color:#2f817b}.levelGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.levelCard{display:grid;gap:8px;text-align:left;padding:20px;border:1px solid var(--line);border-radius:20px;background:#fff;box-shadow:var(--shadow-soft);cursor:pointer;color:var(--ink);transition:transform .15s ease,box-shadow .15s ease}.levelCard strong{font-size:1.08rem}.levelCard span{color:#65727b;line-height:1.45}.levelCard:hover{transform:translateY(-2px);box-shadow:var(--shadow)}@media(max-width:560px){.levelGrid{grid-template-columns:1fr}}
