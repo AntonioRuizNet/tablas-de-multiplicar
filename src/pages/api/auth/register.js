@@ -32,7 +32,8 @@ export default async function handler(req, res) {
 
     const hash = await bcrypt.hash(password, 12);
     const result = await client.query(
-      `INSERT INTO users (email, name, password_hash, role) VALUES ($1, $2, $3, 'user') RETURNING id, email, name, role, name_changed_at`,
+      `INSERT INTO users (email, name, password_hash, role) VALUES ($1, $2, $3, 'user')
+       RETURNING id, email, name, role, avatar_icon, avatar_color, name_changed_at`,
       [email, username.name, hash]
     );
     await ensureProgress(result.rows[0].id, client);

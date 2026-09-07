@@ -40,7 +40,7 @@ async function getOverview(user) {
     : { rows: [] };
 
   const joined = await db.query(
-    `SELECT c.id,c.name,c.code,c.created_at,u.name AS teacher_name,cs.joined_at
+    `SELECT c.id,c.name,c.code,c.created_at,u.name AS teacher_name,u.avatar_icon AS teacher_avatar_icon,u.avatar_color AS teacher_avatar_color,cs.joined_at
      FROM classroom_students cs
      JOIN classrooms c ON c.id=cs.classroom_id
      JOIN users u ON u.id=c.teacher_id
@@ -54,7 +54,7 @@ async function getOverview(user) {
 
 async function getClassroom(user, classroomId) {
   const classroom = await db.query(
-    `SELECT c.id,c.name,c.code,c.teacher_id,c.created_at,u.name AS teacher_name
+    `SELECT c.id,c.name,c.code,c.teacher_id,c.created_at,u.name AS teacher_name,u.avatar_icon AS teacher_avatar_icon,u.avatar_color AS teacher_avatar_color
      FROM classrooms c JOIN users u ON u.id=c.teacher_id
      WHERE c.id=$1 LIMIT 1`,
     [classroomId]
@@ -82,7 +82,7 @@ async function getClassroom(user, classroomId) {
        JOIN challenge_attempts a ON a.id=q.attempt_id
        WHERE q.answered_at IS NOT NULL
      )
-     SELECT u.id,u.name,cs.joined_at,
+     SELECT u.id,u.name,u.avatar_icon,u.avatar_color,cs.joined_at,
             COALESCE(up.points,0)::int AS points,
             COALESCE(up.level,1)::int AS level,
             COUNT(o.user_id)::int AS operations,
@@ -93,7 +93,7 @@ async function getClassroom(user, classroomId) {
      LEFT JOIN user_progress up ON up.user_id=u.id
      LEFT JOIN operations o ON o.user_id=u.id
      WHERE cs.classroom_id=$1
-     GROUP BY u.id,u.name,cs.joined_at,up.points,up.level
+     GROUP BY u.id,u.name,u.avatar_icon,u.avatar_color,cs.joined_at,up.points,up.level
      ORDER BY points DESC,u.name ASC`,
     [classroomId]
   );
@@ -120,7 +120,7 @@ export default async function handler(req, res) {
 
     if (action === "activate-teacher") {
       if (user.role === "admin" || user.role === "teacher") return res.status(200).json({ ok: true, user: publicUser(user) });
-      const updated = await db.query(`UPDATE users SET role='teacher' WHERE id=$1 RETURNING id,email,name,role,name_changed_at`, [user.id]);
+      const updated = await db.query(`UPDATE users SET role='teacher' WHERE id=$1 RETURNING id,email,name,role,avatar_icon,avatar_color,name_changed_at`, [user.id]);
       return res.status(200).json({ ok: true, user: publicUser(updated.rows[0]) });
     }
 

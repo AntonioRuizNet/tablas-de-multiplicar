@@ -9,7 +9,7 @@ export default async function handler(req, res) {
   const password = String(req.body?.password || "");
   const normalizedEmail = normalizeEmail(identifier);
   const { rows } = await db.query(
-    `SELECT id, email, name, role, name_changed_at, password_hash
+    `SELECT id, email, name, role, avatar_icon, avatar_color, name_changed_at, password_hash
      FROM users
      WHERE LOWER(name) = LOWER($1) OR email = $2
      LIMIT 1`,

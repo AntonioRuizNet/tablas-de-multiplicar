@@ -11,6 +11,8 @@ export default async function handler(req, res) {
       SELECT
         u.id,
         COALESCE(NULLIF(TRIM(u.name), ''), 'Usuario') AS name,
+        u.avatar_icon,
+        u.avatar_color,
         p.points
       FROM user_progress p
       INNER JOIN users u ON u.id = p.user_id
