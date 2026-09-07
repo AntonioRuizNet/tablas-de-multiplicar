@@ -76,6 +76,11 @@ async function getClassroom(user, classroomId) {
        UNION ALL SELECT user_id,is_correct,created_at FROM activity_operations
        UNION ALL SELECT user_id,is_correct,created_at FROM addition_operations
        UNION ALL SELECT user_id,is_correct,created_at FROM arithmetic_operations
+       UNION ALL
+       SELECT a.user_id,q.is_correct,q.answered_at AS created_at
+       FROM challenge_attempt_questions q
+       JOIN challenge_attempts a ON a.id=q.attempt_id
+       WHERE q.answered_at IS NOT NULL
      )
      SELECT u.id,u.name,cs.joined_at,
             COALESCE(up.points,0)::int AS points,
@@ -158,8 +163,18 @@ export default async function handler(req, res) {
     }
 
     if (action === "delete") {
-      const result = await db.query(`DELETE FROM classrooms WHERE id=$1 AND (teacher_id=$2 OR $3='admin') RETURNING id`, [req.body?.classroomId, user.id, user.role]);
-      if (!result.rowCount) return res.status(403).json({ ok: false, error: "No puedes eliminar esta aula." });
+      const classroomId = req.body?.classroomId;
+      const owned = await db.query(`SELECT id FROM classrooms WHERE id=$1 AND (teacher_id=$2 OR $3='admin')`, [classroomId, user.id, user.role]);
+      if (!owned.rowCount) return res.status(403).json({ ok: false, error: "No puedes eliminar esta aula." });
+      const attempts = await db.query(
+        `SELECT COUNT(*)::int AS count
+         FROM challenge_attempts a
+         JOIN classroom_challenges ch ON ch.id=a.challenge_id
+         WHERE ch.classroom_id=$1`,
+        [classroomId]
+      );
+      if (Number(attempts.rows[0]?.count || 0) > 0) return res.status(409).json({ ok: false, error: "Esta aula ya tiene resultados de retos. No puede eliminarse para conservar el historial y los puntos de los alumnos." });
+      await db.query(`DELETE FROM classrooms WHERE id=$1`, [classroomId]);
       return res.status(200).json({ ok: true });
     }
 
