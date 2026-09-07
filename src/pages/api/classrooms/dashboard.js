@@ -24,7 +24,7 @@ export default async function handler(req, res) {
          UNION ALL SELECT user_id,is_correct,created_at,NULL::int AS table_number FROM addition_operations
          UNION ALL SELECT user_id,is_correct,created_at,NULL::int AS table_number FROM arithmetic_operations
          UNION ALL
-         SELECT a.user_id,q.is_correct,q.answered_at AS created_at,q.operand_a AS table_number
+         SELECT a.user_id,q.is_correct,q.answered_at AS created_at,q.table_number
          FROM challenge_attempt_questions q JOIN challenge_attempts a ON a.id=q.attempt_id
          WHERE q.answered_at IS NOT NULL
        ), filtered AS (
@@ -53,7 +53,7 @@ export default async function handler(req, res) {
          SELECT user_id,is_correct,created_at,table_number FROM practice_operations
          UNION ALL SELECT user_id,is_correct,created_at,table_number FROM activity_operations
          UNION ALL
-         SELECT a.user_id,q.is_correct,q.answered_at AS created_at,q.operand_a AS table_number
+         SELECT a.user_id,q.is_correct,q.answered_at AS created_at,q.table_number
          FROM challenge_attempt_questions q JOIN challenge_attempts a ON a.id=q.attempt_id
          WHERE q.answered_at IS NOT NULL
        )
