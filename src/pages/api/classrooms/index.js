@@ -76,6 +76,11 @@ async function getClassroom(user, classroomId) {
        UNION ALL SELECT user_id,is_correct,created_at FROM activity_operations
        UNION ALL SELECT user_id,is_correct,created_at FROM addition_operations
        UNION ALL SELECT user_id,is_correct,created_at FROM arithmetic_operations
+       UNION ALL
+       SELECT a.user_id,q.is_correct,q.answered_at AS created_at
+       FROM challenge_attempt_questions q
+       JOIN challenge_attempts a ON a.id=q.attempt_id
+       WHERE q.answered_at IS NOT NULL
      )
      SELECT u.id,u.name,cs.joined_at,
             COALESCE(up.points,0)::int AS points,
