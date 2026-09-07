@@ -8,5 +8,9 @@
 .link:hover { background:#f8f7f4; transform:translateX(2px); }
 .active { background:var(--yellow-soft); color:#4b4133; box-shadow:inset 0 0 0 1px rgba(233,173,76,.35); }
 .icon { width:28px;height:28px;display:grid;place-items:center;border-radius:10px;background:#f7f6f3;font-size:.95rem; }
+.otherGamesLink { margin-top:2px; background:#f6f2ff; color:#5d5388; }
+.otherGamesLink:hover { background:#eee8ff; }
+.otherGamesLink.active { background:#e9e1ff; color:#51468d; box-shadow:inset 0 0 0 1px rgba(111,91,190,.24); }
+.otherGamesLink .icon { background:#ece7ff; }
 
 @media(max-width:900px){.panel{padding-bottom:0}}
