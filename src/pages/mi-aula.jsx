@@ -68,6 +68,20 @@ export default function MiAulaPage() {
     finally { setBusy(false); }
   };
 
+  const closeClassroom = useCallback(() => setSelected(null), []);
+
+  useEffect(() => {
+    if (!selected) return undefined;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKeyDown = (event) => { if (event.key === "Escape") closeClassroom(); };
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [selected, closeClassroom]);
+
   const post = async (body, success, url = "/api/classrooms") => {
     try {
       setBusy(true); setMessage("");
@@ -201,35 +215,37 @@ export default function MiAulaPage() {
             })}</div>
           </section>}
 
-          {selected && isTeacher && <section className={styles.detail}>
-            <div className={styles.detailHeader}><div><span className={styles.eyebrow}>Código {selected.code}</span><h2>{selected.name}</h2></div><button onClick={() => setSelected(null)}>Cerrar</button></div>
-            <div className={styles.stats}><div><strong>{students.length}</strong><span>Alumnos</span></div><div><strong>{summary.operations}</strong><span>Operaciones</span></div><div><strong>{summary.accuracy}%</strong><span>Aciertos</span></div></div>
+          {selected && isTeacher && <div className={styles.modalOverlay} role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) closeClassroom(); }}>
+            <section className={`${styles.detail} ${styles.modal}`} role="dialog" aria-modal="true" aria-labelledby="classroom-modal-title">
+              <div className={styles.detailHeader}><div><span className={styles.eyebrow}>Código {selected.code}</span><h2 id="classroom-modal-title">{selected.name}</h2></div><button onClick={closeClassroom}>Cerrar</button></div>
+              <div className={styles.stats}><div><strong>{students.length}</strong><span>Alumnos</span></div><div><strong>{summary.operations}</strong><span>Operaciones</span></div><div><strong>{summary.accuracy}%</strong><span>Aciertos</span></div></div>
 
-            <div className={styles.tableWrap}><table><thead><tr><th>Alumno</th><th>Nivel</th><th>Puntos</th><th>Operaciones</th><th>Aciertos</th><th>Última actividad</th><th></th></tr></thead><tbody>
-              {students.map((student) => <tr key={student.id}><td>{student.name || "Jugador"}</td><td>{student.level}</td><td>{student.points}</td><td>{student.operations}</td><td>{student.accuracy}%</td><td>{student.last_activity ? new Date(student.last_activity).toLocaleDateString("es-ES") : "Sin actividad"}</td><td><button className={styles.dangerText} onClick={() => removeStudent(student.id)}>Sacar</button></td></tr>)}
-            </tbody></table>{!students.length && <p className={styles.empty}>Aún no hay alumnos en esta aula. Comparte el código <strong>{selected.code}</strong>.</p>}</div>
+              <div className={styles.tableWrap}><table><thead><tr><th>Alumno</th><th>Nivel</th><th>Puntos</th><th>Operaciones</th><th>Aciertos</th><th>Última actividad</th><th></th></tr></thead><tbody>
+                {students.map((student) => <tr key={student.id}><td>{student.name || "Jugador"}</td><td>{student.level}</td><td>{student.points}</td><td>{student.operations}</td><td>{student.accuracy}%</td><td>{student.last_activity ? new Date(student.last_activity).toLocaleDateString("es-ES") : "Sin actividad"}</td><td><button className={styles.dangerText} onClick={() => removeStudent(student.id)}>Sacar</button></td></tr>)}
+              </tbody></table>{!students.length && <p className={styles.empty}>Aún no hay alumnos en esta aula. Comparte el código <strong>{selected.code}</strong>.</p>}</div>
 
-            <div className={styles.teacherSection}>
-              <div><span className={styles.eyebrow}>Actividades</span><h2>Crear un reto</h2><p>Elige las tablas y el número de operaciones. El enlace resultante se puede compartir directamente.</p></div>
-              <form className={styles.challengeForm} onSubmit={createChallenge}>
-                <label>Título<input value={challengeTitle} onChange={(event) => setChallengeTitle(event.target.value)} placeholder="Ej. Repaso de las tablas 6, 7 y 8" maxLength={140} required /></label>
-                <div><span className={styles.formLabel}>Tablas</span><div className={styles.tablePicker}>{TABLES.map((table) => <button type="button" key={table} className={challengeTables.includes(table) ? styles.tableActive : ""} onClick={() => toggleChallengeTable(table)}>{table}</button>)}</div></div>
-                <div className={styles.formGrid}><label>Operaciones<input type="number" min="5" max="100" value={questionCount} onChange={(event) => setQuestionCount(event.target.value)} required /></label><label>Fecha límite (opcional)<input type="datetime-local" value={dueAt} onChange={(event) => setDueAt(event.target.value)} /></label></div>
-                <button className={styles.primary} disabled={busy || !challengeTables.length}>Crear reto</button>
-              </form>
-            </div>
+              <div className={styles.teacherSection}>
+                <div><span className={styles.eyebrow}>Actividades</span><h2>Crear un reto</h2><p>Elige las tablas y el número de operaciones. El enlace resultante se puede compartir directamente con los alumnos, que realizarán el reto desde ese enlace con su propia cuenta.</p></div>
+                <form className={styles.challengeForm} onSubmit={createChallenge}>
+                  <label>Título<input value={challengeTitle} onChange={(event) => setChallengeTitle(event.target.value)} placeholder="Ej. Repaso de las tablas 6, 7 y 8" maxLength={140} required /></label>
+                  <div><span className={styles.formLabel}>Tablas</span><div className={styles.tablePicker}>{TABLES.map((table) => <button type="button" key={table} className={challengeTables.includes(table) ? styles.tableActive : ""} onClick={() => toggleChallengeTable(table)}>{table}</button>)}</div></div>
+                  <div className={styles.formGrid}><label>Operaciones<input type="number" min="5" max="100" value={questionCount} onChange={(event) => setQuestionCount(event.target.value)} required /></label><label>Fecha límite (opcional)<input type="datetime-local" value={dueAt} onChange={(event) => setDueAt(event.target.value)} /></label></div>
+                  <button className={styles.primary} disabled={busy || !challengeTables.length}>Crear reto</button>
+                </form>
+              </div>
 
-            <div className={styles.teacherSection}>
-              <div className={styles.sectionTitle}><h2>Retos del aula</h2><span>{challenges.length}</span></div>
-              <div className={styles.challengeList}>{challenges.map((challenge) => <article key={challenge.id} className={styles.challengeRow}>
-                <div><h3>{challenge.title}</h3><p>Tablas {challenge.tables.join(", ")} · {challenge.question_count} operaciones{challenge.due_at ? ` · hasta ${new Date(challenge.due_at).toLocaleDateString("es-ES")}` : ""}</p><div className={styles.miniStats}><span>{challenge.completed}/{students.length} completados</span><span>{challenge.accuracy || 0}% aciertos</span><span>{challenge.avg_duration ? `${challenge.avg_duration}s de media` : "Sin tiempos"}</span></div></div>
-                <div className={styles.challengeActions}><Link href={challenge.url}>Resultados</Link><button onClick={() => copyChallengeLink(challenge)}>Copiar enlace</button><button onClick={() => changeChallenge(challenge.id, challenge.is_active ? "close" : "reopen")}>{challenge.is_active ? "Cerrar" : "Reabrir"}</button><button className={styles.dangerText} onClick={() => changeChallenge(challenge.id, "delete")}>Eliminar</button></div>
-              </article>)}</div>
-              {!challenges.length && <p className={styles.empty}>Todavía no has creado retos para esta aula.</p>}
-            </div>
+              <div className={styles.teacherSection}>
+                <div className={styles.sectionTitle}><h2>Retos del aula</h2><span>{challenges.length}</span></div>
+                <div className={styles.challengeList}>{challenges.map((challenge) => <article key={challenge.id} className={styles.challengeRow}>
+                  <div><h3>{challenge.title}</h3><p>Tablas {challenge.tables.join(", ")} · {challenge.question_count} operaciones{challenge.due_at ? ` · hasta ${new Date(challenge.due_at).toLocaleDateString("es-ES")}` : ""}</p><div className={styles.miniStats}><span>{challenge.completed}/{students.length} completados</span><span>{challenge.accuracy || 0}% aciertos</span><span>{challenge.avg_duration ? `${challenge.avg_duration}s de media` : "Sin tiempos"}</span></div></div>
+                  <div className={styles.challengeActions}><Link href={challenge.url}>Resultados</Link><button onClick={() => copyChallengeLink(challenge)}>Copiar enlace para alumnos</button><button onClick={() => changeChallenge(challenge.id, challenge.is_active ? "close" : "reopen")}>{challenge.is_active ? "Cerrar" : "Reabrir"}</button><button className={styles.dangerText} onClick={() => changeChallenge(challenge.id, "delete")}>Eliminar</button></div>
+                </article>)}</div>
+                {!challenges.length && <p className={styles.empty}>Todavía no has creado retos para esta aula.</p>}
+              </div>
 
-            {!!hardest.length && <div className={styles.teacherSection}><h2>Operaciones que más cuestan al aula</h2><p>Calculado a partir de las respuestas de los retos.</p><div className={styles.hardestGrid}>{hardest.map((item) => <div key={`${item.table_number}-${item.multiplier}`}><strong>{item.table_number} × {item.multiplier}</strong><span>{item.errors} fallos · {item.error_rate}% error</span></div>)}</div></div>}
-          </section>}
+              {!!hardest.length && <div className={styles.teacherSection}><h2>Operaciones que más cuestan al aula</h2><p>Calculado a partir de las respuestas de los retos.</p><div className={styles.hardestGrid}>{hardest.map((item) => <div key={`${item.table_number}-${item.multiplier}`}><strong>{item.table_number} × {item.multiplier}</strong><span>{item.errors} fallos · {item.error_rate}% error</span></div>)}</div></div>}
+            </section>
+          </div>}
         </>}
       </main>
     </ResourceLayout>
