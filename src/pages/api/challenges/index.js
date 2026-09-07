@@ -144,6 +144,8 @@ export default async function handler(req, res) {
       );
       if (!challenge.rowCount || (challenge.rows[0].teacher_id !== user.id && user.role !== "admin")) return res.status(403).json({ ok: false, error: "No puedes modificar este reto." });
       if (action === "delete") {
+        const attempts = await db.query(`SELECT COUNT(*)::int AS count FROM challenge_attempts WHERE challenge_id=$1`, [req.body.challengeId]);
+        if (Number(attempts.rows[0]?.count || 0) > 0) return res.status(409).json({ ok: false, error: "Este reto ya tiene resultados. Ciérralo en lugar de eliminarlo para conservar el historial y los puntos de los alumnos." });
         await db.query(`DELETE FROM classroom_challenges WHERE id=$1`, [req.body.challengeId]);
         return res.status(200).json({ ok: true, message: "Reto eliminado." });
       }
