@@ -22,6 +22,7 @@ export default function Perfil() {
   const [avatarMessage, setAvatarMessage] = useState("");
   const [avatarError, setAvatarError] = useState("");
   const [avatarBusy, setAvatarBusy] = useState(false);
+  const [avatarEditing, setAvatarEditing] = useState(false);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -81,6 +82,23 @@ export default function Perfil() {
     }
   }
 
+  function editAvatar() {
+    const avatar = normalizeAvatar(user.avatarIcon, user.avatarColor);
+    setAvatarIcon(avatar.icon);
+    setAvatarColor(avatar.color);
+    setAvatarMessage("");
+    setAvatarError("");
+    setAvatarEditing(true);
+  }
+
+  function cancelAvatarEdit() {
+    const avatar = normalizeAvatar(user.avatarIcon, user.avatarColor);
+    setAvatarIcon(avatar.icon);
+    setAvatarColor(avatar.color);
+    setAvatarError("");
+    setAvatarEditing(false);
+  }
+
   async function saveAvatar() {
     setAvatarMessage("");
     setAvatarError("");
@@ -99,6 +117,7 @@ export default function Perfil() {
       setUser(result.user);
       setData((current) => current ? { ...current, user: result.user } : current);
       setAvatarMessage(result.message || "Avatar actualizado correctamente.");
+      setAvatarEditing(false);
     } catch (requestError) {
       console.error(requestError);
       setAvatarError("No se ha podido conectar con el servidor. Inténtalo de nuevo.");
@@ -164,11 +183,20 @@ export default function Perfil() {
           {recoveryMode ? <p className={styles.success}>Has entrado mediante el enlace de recuperación. Ahora puedes crear una nueva contraseña sin indicar la anterior.</p> : null}
 
           <section className={styles.avatarSection}>
-            <div><h2 className={styles.sectionTitle}>Personalizar avatar</h2><p className={styles.helpText}>Elige uno de los personajes disponibles y un color. Tu avatar aparecerá en rankings y en tu perfil público.</p></div>
+            <div><h2 className={styles.sectionTitle}>Avatar</h2><p className={styles.helpText}>Tu avatar aparece en rankings y en tu perfil público.</p></div>
             {avatarMessage && <p className={styles.success}>{avatarMessage}</p>}
             {avatarError && <p className={styles.error}>{avatarError}</p>}
-            <AvatarPicker icon={avatarIcon} color={avatarColor} onIconChange={setAvatarIcon} onColorChange={setAvatarColor} disabled={avatarBusy} />
-            <button type="button" className={styles.button} onClick={saveAvatar} disabled={avatarBusy}>{avatarBusy ? "Guardando…" : "Guardar avatar"}</button>
+            {!avatarEditing ? (
+              <button type="button" className={styles.button} onClick={editAvatar}>Modificar avatar</button>
+            ) : (
+              <>
+                <AvatarPicker icon={avatarIcon} color={avatarColor} onIconChange={setAvatarIcon} onColorChange={setAvatarColor} disabled={avatarBusy} />
+                <div className={styles.links}>
+                  <button type="button" className={styles.button} onClick={saveAvatar} disabled={avatarBusy}>{avatarBusy ? "Guardando…" : "Guardar avatar"}</button>
+                  <button type="button" className={styles.button} onClick={cancelAvatarEdit} disabled={avatarBusy}>Cancelar</button>
+                </div>
+              </>
+            )}
           </section>
 
           <div className={styles.profileColumns}>
