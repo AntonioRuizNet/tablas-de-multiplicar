@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { ResourceLayout } from "../../components/resources/ResourceLayout";
@@ -92,6 +93,7 @@ export default function RetoPage() {
 
   return (
     <ResourceLayout title={challenge?.title || "Reto de tablas"} description="Reto de tablas de multiplicar creado por un profesor." path={`/reto/${code || ""}`}>
+      <Head><meta name="robots" content="noindex,nofollow,noarchive" /></Head>
       <main className={styles.page}>
         {authLoading && <section className={styles.card}><p>Cargando...</p></section>}
         {!authLoading && !user && <section className={styles.card}>
