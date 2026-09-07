@@ -19,7 +19,7 @@ async function listClassroomChallenges(user, classroomId) {
   if (!access.isOwner) {
     const result = await db.query(
       `SELECT ch.id,ch.title,ch.code,ch.tables,ch.question_count,ch.due_at,ch.is_active,ch.created_at,
-              a.completed_at,a.correct_count,a.wrong_count,a.duration_seconds
+              a.started_at,a.completed_at,a.correct_count,a.wrong_count,a.duration_seconds
        FROM classroom_challenges ch
        LEFT JOIN challenge_attempts a ON a.challenge_id=ch.id AND a.user_id=$2
        WHERE ch.classroom_id=$1
@@ -71,7 +71,7 @@ async function listMyChallenges(user) {
   const result = await db.query(
     `SELECT ch.id,ch.title,ch.code,ch.tables,ch.question_count,ch.due_at,ch.is_active,ch.created_at,
             c.id AS classroom_id,c.name AS classroom_name,u.name AS teacher_name,
-            a.completed_at,a.correct_count,a.wrong_count,a.duration_seconds
+            a.started_at,a.completed_at,a.correct_count,a.wrong_count,a.duration_seconds
      FROM classroom_students cs
      JOIN classrooms c ON c.id=cs.classroom_id
      JOIN classroom_challenges ch ON ch.classroom_id=c.id
@@ -116,6 +116,7 @@ export default async function handler(req, res) {
       if (req.body?.dueAt) {
         dueAt = new Date(req.body.dueAt);
         if (Number.isNaN(dueAt.getTime())) return res.status(400).json({ ok: false, error: "La fecha límite no es válida." });
+        if (dueAt.getTime() <= Date.now()) return res.status(400).json({ ok: false, error: "La fecha límite debe ser posterior a la hora actual." });
       }
 
       const client = await db.connect();
