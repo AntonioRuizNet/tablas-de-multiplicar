@@ -5,6 +5,7 @@ import PropTypes from "prop-types";
 import styles from "./AppSidebar.module.css";
 import { Leaderboard } from "./Leaderboard";
 import { OperationsLeaderboard } from "./OperationsLeaderboard";
+import { useAuth } from "../auth/AuthContext";
 
 export const APP_NAV_LINKS = [
   ["/", "🏠", "Inicio"],
@@ -28,18 +29,21 @@ function isLinkActive(pathname, href) {
 
 export function AppSidebar({ onNavigate }) {
   const router = useRouter();
+  const { user } = useAuth();
   const handleNavigate = () => { if (onNavigate) onNavigate(); };
+  const classroomLabel = user?.role === "teacher" || user?.role === "admin" ? "Mis aulas" : "Mi aula";
+  const links = user ? [...APP_NAV_LINKS, ["/mi-aula", "👨‍🏫", classroomLabel, "classroom"]] : APP_NAV_LINKS;
 
   return (
     <div className={styles.panel}>
       <nav className={styles.nav} aria-label="Navegación principal">
-        {APP_NAV_LINKS.map(([href, icon, label, variant]) => {
+        {links.map(([href, icon, label, variant]) => {
           const active = isLinkActive(router.asPath.split("?")[0], href);
           return (
             <Link
               key={href}
               href={href}
-              className={`${styles.link} ${active ? styles.active : ""} ${variant === "otherGames" ? styles.otherGamesLink : ""}`}
+              className={`${styles.link} ${active ? styles.active : ""} ${variant === "otherGames" ? styles.otherGamesLink : ""} ${variant === "classroom" ? styles.classroomLink : ""}`}
               onClick={handleNavigate}
               aria-current={active ? "page" : undefined}
             >
