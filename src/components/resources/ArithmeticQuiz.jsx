@@ -1,10 +1,10 @@
 import React, { useMemo, useState } from "react";
 import styles from "./Resource.module.css";
+import levelStyles from "./ArithmeticQuiz.module.css";
 import { MenuKeyboard } from "../keyboard";
 import { useAuth } from "../auth/AuthContext";
 
 const TOTAL = 20;
-
 const rand = (min, max) => min + Math.floor(Math.random() * (max - min + 1));
 
 const ADDITION_LEVELS = [
@@ -38,9 +38,9 @@ const DIVISION_LEVELS = [
 ];
 
 const CONFIG = {
-  addition: { symbol:"+", levels:ADDITION_LEVELS, theme:"addition", label:"suma" },
-  subtraction: { symbol:"−", levels:SUBTRACTION_LEVELS, theme:"subtraction", label:"resta" },
-  division: { symbol:"÷", levels:DIVISION_LEVELS, theme:"division", label:"división" },
+  addition: { symbol:"+", levels:ADDITION_LEVELS, theme:"addition" },
+  subtraction: { symbol:"−", levels:SUBTRACTION_LEVELS, theme:"subtraction" },
+  division: { symbol:"÷", levels:DIVISION_LEVELS, theme:"division" },
 };
 
 function resultFor(type, a, b) {
@@ -111,11 +111,11 @@ export function ArithmeticQuiz({ type }) {
   };
 
   if (!level) {
-    return <div className={`${styles.levelGrid} ${styles[`levelGrid_${config.theme}`]}`}>
-      {config.levels.map((item) => <button type="button" className={styles.levelCard} key={item.id} onClick={() => start(item.id)}>
-        <span className={styles.levelNumber}>Nivel {item.id}</span>
-        <strong className={styles.levelName}>{item.name}</strong>
-        <span className={styles.levelDescription}>{item.text}</span>
+    return <div className={`${levelStyles.grid} ${levelStyles[config.theme]}`}>
+      {config.levels.map((item) => <button type="button" className={levelStyles.card} key={item.id} onClick={() => start(item.id)}>
+        <span className={levelStyles.levelNumber}>Nivel {item.id}</span>
+        <strong className={levelStyles.levelName}>{item.name}</strong>
+        <span className={levelStyles.description}>{item.text}</span>
       </button>)}
     </div>;
   }
