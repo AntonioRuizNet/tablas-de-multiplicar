@@ -9,7 +9,8 @@ import { OperationsLeaderboard } from "./OperationsLeaderboard";
 export const APP_NAV_LINKS = [
   ["/", "🏠", "Inicio"],
   ["/todas-las-tablas-de-multiplicar", "✖️", "Todas las tablas"],
-  ["/juegos-tablas-de-multiplicar", "🎮", "Juegos"],
+  ["/juegos-tablas-de-multiplicar", "🎮", "Juegos de multiplicar"],
+  ["/otros-juegos", "🧮", "Otros juegos", "otherGames"],
   ["/contrarreloj", "⏱️", "Contrarreloj"],
   ["/tabla-pitagorica", "🧩", "Tabla pitagórica"],
   ["/practicar-errores", "⭐", "Mis errores"],
@@ -21,6 +22,7 @@ function isLinkActive(pathname, href) {
   if (href === "/") return pathname === "/";
   if (href === "/todas-las-tablas-de-multiplicar" && /^\/tabla-del-\d+$/.test(pathname)) return true;
   if (href === "/articulos") return pathname === href || pathname.startsWith(`${href}/`);
+  if (href === "/otros-juegos") return ["/otros-juegos", "/sumas", "/restas", "/divisiones"].includes(pathname);
   return pathname === href;
 }
 
@@ -31,13 +33,13 @@ export function AppSidebar({ onNavigate }) {
   return (
     <div className={styles.panel}>
       <nav className={styles.nav} aria-label="Navegación principal">
-        {APP_NAV_LINKS.map(([href, icon, label]) => {
+        {APP_NAV_LINKS.map(([href, icon, label, variant]) => {
           const active = isLinkActive(router.asPath.split("?")[0], href);
           return (
             <Link
               key={href}
               href={href}
-              className={`${styles.link} ${active ? styles.active : ""}`}
+              className={`${styles.link} ${active ? styles.active : ""} ${variant === "otherGames" ? styles.otherGamesLink : ""}`}
               onClick={handleNavigate}
               aria-current={active ? "page" : undefined}
             >
