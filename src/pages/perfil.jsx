@@ -3,6 +3,9 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { useAuth } from "../components/auth/AuthContext";
 import { AppLayout } from "../components/layout/AppLayout";
+import { AvatarPicker } from "../components/avatar/AvatarPicker";
+import { UserAvatar } from "../components/avatar/UserAvatar";
+import { DEFAULT_AVATAR_COLOR, DEFAULT_AVATAR_ICON, normalizeAvatar } from "../lib/avatars";
 import styles from "../styles/auth.module.css";
 import { ACHIEVEMENTS_BY_ID } from "../constants/achievements";
 
@@ -14,6 +17,11 @@ export default function Perfil() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [nameBusy, setNameBusy] = useState(false);
+  const [avatarIcon, setAvatarIcon] = useState(DEFAULT_AVATAR_ICON);
+  const [avatarColor, setAvatarColor] = useState(DEFAULT_AVATAR_COLOR);
+  const [avatarMessage, setAvatarMessage] = useState("");
+  const [avatarError, setAvatarError] = useState("");
+  const [avatarBusy, setAvatarBusy] = useState(false);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -30,6 +38,9 @@ export default function Perfil() {
   useEffect(() => {
     if (!user) return;
     setName(user.name || "");
+    const avatar = normalizeAvatar(user.avatarIcon, user.avatarColor);
+    setAvatarIcon(avatar.icon);
+    setAvatarColor(avatar.color);
     fetch("/api/profile", { cache: "no-store" })
       .then((response) => response.json())
       .then((result) => { if (result.ok) setData(result); })
@@ -67,6 +78,32 @@ export default function Perfil() {
       setError("No se ha podido conectar con el servidor. Inténtalo de nuevo.");
     } finally {
       setNameBusy(false);
+    }
+  }
+
+  async function saveAvatar() {
+    setAvatarMessage("");
+    setAvatarError("");
+    setAvatarBusy(true);
+    try {
+      const response = await fetch("/api/profile/avatar", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ avatarIcon, avatarColor }),
+      });
+      const result = await response.json();
+      if (!response.ok) {
+        setAvatarError(result.error || "No se ha podido guardar el avatar.");
+        return;
+      }
+      setUser(result.user);
+      setData((current) => current ? { ...current, user: result.user } : current);
+      setAvatarMessage(result.message || "Avatar actualizado correctamente.");
+    } catch (requestError) {
+      console.error(requestError);
+      setAvatarError("No se ha podido conectar con el servidor. Inténtalo de nuevo.");
+    } finally {
+      setAvatarBusy(false);
     }
   }
 
@@ -119,10 +156,20 @@ export default function Perfil() {
       <Head><meta name="robots" content="noindex,follow" /></Head>
       <div className={styles.profilePage}>
         <section className={styles.profileCard}>
-          <h1 className={styles.title}>Mi perfil</h1>
-          <p className={styles.subtitle}>{user.email}</p>
+          <div className={styles.profileHeader}>
+            <UserAvatar icon={user.avatarIcon} color={user.avatarColor} size={72} />
+            <div><h1 className={styles.title}>Mi perfil</h1><p className={styles.subtitle}>{user.email}</p></div>
+          </div>
 
           {recoveryMode ? <p className={styles.success}>Has entrado mediante el enlace de recuperación. Ahora puedes crear una nueva contraseña sin indicar la anterior.</p> : null}
+
+          <section className={styles.avatarSection}>
+            <div><h2 className={styles.sectionTitle}>Personalizar avatar</h2><p className={styles.helpText}>Elige uno de los personajes disponibles y un color. Tu avatar aparecerá en rankings y en tu perfil público.</p></div>
+            {avatarMessage && <p className={styles.success}>{avatarMessage}</p>}
+            {avatarError && <p className={styles.error}>{avatarError}</p>}
+            <AvatarPicker icon={avatarIcon} color={avatarColor} onIconChange={setAvatarIcon} onColorChange={setAvatarColor} disabled={avatarBusy} />
+            <button type="button" className={styles.button} onClick={saveAvatar} disabled={avatarBusy}>{avatarBusy ? "Guardando…" : "Guardar avatar"}</button>
+          </section>
 
           <div className={styles.profileColumns}>
             <form className={styles.form} onSubmit={save}>
@@ -158,8 +205,6 @@ export default function Perfil() {
             <div className={styles.stat}><span>Tiempo medio</span><strong>{stats?.averageTime ?? 0}s</strong></div>
             <div className={styles.stat}><span>Tablas completadas</span><strong>{stats?.completedTables ?? 0}</strong></div>
           </div>
-
-
 
           <section className={styles.achievementsSection}>
             <div className={styles.achievementsHeading}>
