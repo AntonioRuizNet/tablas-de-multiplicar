@@ -19,12 +19,12 @@ export default async function handler(req, res) {
 
     const students = await db.query(
       `WITH operations AS (
-         SELECT user_id,is_correct,created_at,table_number,factor FROM practice_operations
-         UNION ALL SELECT user_id,is_correct,created_at,table_number,factor FROM activity_operations
-         UNION ALL SELECT user_id,is_correct,created_at,NULL::int AS table_number,NULL::int AS factor FROM addition_operations
-         UNION ALL SELECT user_id,is_correct,created_at,NULL::int AS table_number,NULL::int AS factor FROM arithmetic_operations
+         SELECT user_id,is_correct,created_at,table_number FROM practice_operations
+         UNION ALL SELECT user_id,is_correct,created_at,table_number FROM activity_operations
+         UNION ALL SELECT user_id,is_correct,created_at,NULL::int AS table_number FROM addition_operations
+         UNION ALL SELECT user_id,is_correct,created_at,NULL::int AS table_number FROM arithmetic_operations
          UNION ALL
-         SELECT a.user_id,q.is_correct,q.answered_at AS created_at,q.operand_a AS table_number,q.operand_b AS factor
+         SELECT a.user_id,q.is_correct,q.answered_at AS created_at,q.operand_a AS table_number
          FROM challenge_attempt_questions q JOIN challenge_attempts a ON a.id=q.attempt_id
          WHERE q.answered_at IS NOT NULL
        ), filtered AS (
@@ -71,19 +71,7 @@ export default async function handler(req, res) {
     const rows = students.rows;
     const operations = rows.reduce((sum, student) => sum + Number(student.operations || 0), 0);
     const correct = rows.reduce((sum, student) => sum + Number(student.operations || 0) * Number(student.accuracy || 0) / 100, 0);
-    return res.status(200).json({
-      ok: true,
-      period,
-      summary: {
-        students: rows.length,
-        operations,
-        accuracy: operations ? Math.round(correct * 100 / operations) : 0,
-        needsAttention: rows.filter((student) => student.needs_attention).length,
-        inactive: rows.filter((student) => student.inactive).length,
-      },
-      students: rows,
-      tables: tables.rows,
-    });
+    return res.status(200).json({ ok: true, period, summary: { students: rows.length, operations, accuracy: operations ? Math.round(correct * 100 / operations) : 0, needsAttention: rows.filter((student) => student.needs_attention).length, inactive: rows.filter((student) => student.inactive).length }, students: rows, tables: tables.rows });
   } catch (error) {
     console.error("classroom dashboard error", error);
     return res.status(500).json({ ok: false, error: "No se han podido cargar las estadísticas del aula." });
