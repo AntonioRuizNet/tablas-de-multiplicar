@@ -12,5 +12,9 @@
 .otherGamesLink:hover { background:#eee8ff; }
 .otherGamesLink.active { background:#e9e1ff; color:#51468d; box-shadow:inset 0 0 0 1px rgba(111,91,190,.24); }
 .otherGamesLink .icon { background:#ece7ff; }
+.classroomLink { margin-top:6px; background:#eefdff; color:#356b70; box-shadow:inset 0 0 0 1px rgba(76,177,184,.16); }
+.classroomLink:hover { background:#dff8fa; }
+.classroomLink.active { background:#d7f4f5; color:#245c61; box-shadow:inset 0 0 0 1px rgba(76,177,184,.32); }
+.classroomLink .icon { background:#dff7f7; }
 
 @media(max-width:900px){.panel{padding-bottom:0}}
