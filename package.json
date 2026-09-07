@@ -25,7 +25,8 @@
     "start": "next start",
     "test": "next test",
     "export": "next build && next export",
-    "sitemap": "node scripts/generate-sitemap.mjs"
+    "sitemap": "node scripts/generate-sitemap.mjs",
+    "db:migrate": "node scripts/migrate.js"
   },
   "eslintConfig": {
     "extends": [
