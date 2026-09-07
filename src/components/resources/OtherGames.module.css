@@ -1,0 +1,49 @@
+.hero {
+  background:linear-gradient(135deg,#f2edff,#fff 50%,#eaf4ff);
+  border-color:#ded6f7;
+}
+.card {
+  min-height:210px;
+  border-top:0!important;
+  position:relative;
+  overflow:hidden;
+}
+.card::after {
+  content:"";
+  position:absolute;
+  width:110px;
+  height:110px;
+  border-radius:50%;
+  right:-35px;
+  bottom:-45px;
+  opacity:.45;
+}
+.addition {
+  background:linear-gradient(145deg,#effcf9,#fff);
+  border-color:#bfeae3;
+}
+.addition::after { background:#b7eee5; }
+.subtraction {
+  background:linear-gradient(145deg,#fff0f4,#fff);
+  border-color:#f1c5d0;
+}
+.subtraction::after { background:#ffc8d5; }
+.division {
+  background:linear-gradient(145deg,#f2efff,#fff);
+  border-color:#d6cef5;
+}
+.division::after { background:#d9d1ff; }
+.icon {
+  font-size:2rem;
+  margin-bottom:12px;
+  color:#5e52a8;
+}
+.addition .icon { color:#2f817b; }
+.subtraction .icon { color:#b95772; }
+.division .icon { color:#6656b7; }
+.cta {
+  display:inline-block;
+  margin-top:8px;
+  font-weight:850;
+  color:#5c5688;
+}
