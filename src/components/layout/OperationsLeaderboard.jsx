@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import styles from "./Leaderboard.module.css";
+import { UserAvatar } from "../avatar/UserAvatar";
 
 export function OperationsLeaderboard() {
   const [users, setUsers] = useState([]);
@@ -19,9 +20,7 @@ export function OperationsLeaderboard() {
         if (!cancelled) setLoading(false);
       });
 
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, []);
 
   return (
@@ -38,18 +37,17 @@ export function OperationsLeaderboard() {
       ) : (
         <div className={styles.tableWrap}>
           <table className={styles.table}>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Usuario</th>
-                <th>Ops.</th>
-              </tr>
-            </thead>
+            <thead><tr><th>#</th><th>Usuario</th><th>Ops.</th></tr></thead>
             <tbody>
               {users.map((user, index) => (
                 <tr key={user.id}>
                   <td><span className={styles.position}>{index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : index + 1}</span></td>
-                  <td title={user.name}><Link className={styles.userLink} href={`/jugador/${user.id}`}>{user.name}</Link></td>
+                  <td title={user.name}>
+                    <Link className={styles.userLink} href={`/jugador/${user.id}`}>
+                      <UserAvatar icon={user.avatar_icon} color={user.avatar_color} size={28} />
+                      <span>{user.name}</span>
+                    </Link>
+                  </td>
                   <td>{user.operations}</td>
                 </tr>
               ))}
