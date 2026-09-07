@@ -34,7 +34,7 @@ export function AppSidebar({ onNavigate }) {
   const classroomLabel = user?.role === "teacher" || user?.role === "admin" ? "Mis aulas" : "Mi aula";
   const isTeacher = user?.role === "teacher" || user?.role === "admin";
   const links = user
-    ? [...APP_NAV_LINKS, ["/mi-aula", "👨‍🏫", classroomLabel, "classroom"], ...(isTeacher ? [["/estadisticas-aula", "📊", "Estadísticas del aula", "classroom"]] : [])]
+    ? [...APP_NAV_LINKS, ["/historial", "🕘", "Mi historial"], ["/mi-aula", "👨‍🏫", classroomLabel, "classroom"], ...(isTeacher ? [["/estadisticas-aula", "📊", "Estadísticas del aula", "classroom"]] : [])]
     : APP_NAV_LINKS;
 
   return (
@@ -43,13 +43,7 @@ export function AppSidebar({ onNavigate }) {
         {links.map(([href, icon, label, variant]) => {
           const active = isLinkActive(router.asPath.split("?")[0], href);
           return (
-            <Link
-              key={href}
-              href={href}
-              className={`${styles.link} ${active ? styles.active : ""} ${variant === "otherGames" ? styles.otherGamesLink : ""} ${variant === "classroom" ? styles.classroomLink : ""}`}
-              onClick={handleNavigate}
-              aria-current={active ? "page" : undefined}
-            >
+            <Link key={href} href={href} className={`${styles.link} ${active ? styles.active : ""} ${variant === "otherGames" ? styles.otherGamesLink : ""} ${variant === "classroom" ? styles.classroomLink : ""}`} onClick={handleNavigate} aria-current={active ? "page" : undefined}>
               <span className={styles.icon}>{icon}</span><span>{label}</span>
             </Link>
           );
