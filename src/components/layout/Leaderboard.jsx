@@ -43,7 +43,7 @@ export function Leaderboard() {
                 <tr key={user.id}>
                   <td><span className={styles.position}>{index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : index + 1}</span></td>
                   <td title={user.name}>
-                    <Link className={styles.userLink} href={`/jugador/${user.id}`}>
+                    <Link className={styles.userLink} href={`/jugador/${encodeURIComponent(user.name)}>`}>
                       <UserAvatar icon={user.avatar_icon} color={user.avatar_color} size={28} />
                       <span>{user.name}</span>
                     </Link>

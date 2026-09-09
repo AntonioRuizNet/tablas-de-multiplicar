@@ -34,7 +34,7 @@ export function AppSidebar({ onNavigate }) {
   const classroomLabel = user?.role === "teacher" || user?.role === "admin" ? "Mis aulas" : "Mi aula";
   const isTeacher = user?.role === "teacher" || user?.role === "admin";
   const links = user
-    ? [...APP_NAV_LINKS, ["/historial", "🕘", "Mi historial"], ["/mi-aula", "👨‍🏫", classroomLabel, "classroom"], ...(isTeacher ? [["/estadisticas-aula", "📊", "Estadísticas del aula", "classroom"]] : [])]
+    ? [...APP_NAV_LINKS, ["/historial", "🕘", "Mi historial"], ["/mi-aula", "👨‍🏫", classroomLabel, "classroom"], ["/amigos", "🤝", "Amigos", "classroom"], ...(isTeacher ? [["/estadisticas-aula", "📊", "Estadísticas del aula", "classroom"]] : [])]
     : APP_NAV_LINKS;
 
   return (

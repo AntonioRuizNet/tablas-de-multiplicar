@@ -9,6 +9,12 @@ const SITE_URL = "https://tablasdemultiplicar.app";
 const OG_IMAGE = `${SITE_URL}/og-image.png`;
 
 const TABLES = Array.from({ length: 12 }, (_, i) => i + 1);
+const QUICK_OPERATIONS = [
+  { href: "/todas-las-tablas-de-multiplicar", icon: "✖️", title: "Multiplicaciones", levels: TABLES, itemHref: (level) => `/tabla-del-${level}` },
+  { href: "/sumas", icon: "＋", title: "Sumas", levels: Array.from({ length: 7 }, (_, index) => index + 1), itemHref: (level) => `/sumas?nivel=${level}` },
+  { href: "/restas", icon: "−", title: "Restas", levels: Array.from({ length: 7 }, (_, index) => index + 1), itemHref: (level) => `/restas?nivel=${level}` },
+  { href: "/divisiones", icon: "÷", title: "Divisiones", levels: Array.from({ length: 7 }, (_, index) => index + 1), itemHref: (level) => `/divisiones?nivel=${level}` },
+];
 
 export default function Home() {
   const title = "Tablas de multiplicar | Aprende y practica del 1 al 12";
@@ -136,12 +142,11 @@ export default function Home() {
               <p className={styles.cardTitle}>Acceso rápido</p>
               <p className={styles.cardText}>Elige una tabla y empieza ahora mismo.</p>
 
-              <div className={styles.quickGrid}>
-                {TABLES.map((n) => (
-                  <Link key={n} href={`/tabla-del-${n}`} className={styles.quickBtn} aria-label={`Practicar tabla del ${n}`}>
-                    {n}
-                  </Link>
-                ))}
+              <div className={styles.quickOperations}>
+                {QUICK_OPERATIONS.map((operation) => <section key={operation.href} className={styles.quickOperation}>
+                  <Link href={operation.href} className={styles.quickOperationTitle}><span aria-hidden="true">{operation.icon}</span><strong>{operation.title}</strong></Link>
+                  <div className={styles.quickLevels}>{operation.levels.map((level) => <Link key={level} href={operation.itemHref(level)} aria-label={`${operation.title}, ${operation.title === "Multiplicaciones" ? `tabla ${level}` : `nivel ${level}`}`}>{operation.title === "Multiplicaciones" ? level : `Nivel ${level}`}</Link>)}</div>
+                </section>)}
               </div>
 
               <p className={styles.cardHint}>Consejo: empieza por 1, 2, 5 y 10.</p>

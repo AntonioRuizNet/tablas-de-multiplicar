@@ -20,8 +20,7 @@ export default function OtrosJuegos() {
     <div className={styles.grid}>
       {games.map(({ Icon, className, ...game }) => <Link className={styles.cardLink} href={game.href} key={game.href}>
         <article className={`${styles.card} ${gameStyles.card} ${className}`}>
-          <Icon className={gameStyles.icon} aria-hidden="true" />
-          <h2>{game.title}</h2>
+          <div className={gameStyles.cardTitle}><Icon className={gameStyles.icon} aria-hidden="true" /><h2>{game.title}</h2></div>
           <p>{game.text}</p>
           <span className={gameStyles.cta}>Elegir niveles →</span>
         </article>

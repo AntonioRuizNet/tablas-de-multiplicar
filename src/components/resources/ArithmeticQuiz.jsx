@@ -1,10 +1,11 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import PropTypes from "prop-types";
 import styles from "./Resource.module.css";
 import levelStyles from "./ArithmeticQuiz.module.css";
 import { MenuKeyboard } from "../keyboard";
 import { useAuth } from "../auth/AuthContext";
 
-const TOTAL = 20;
+const TOTAL = 10;
 const rand = (min, max) => min + Math.floor(Math.random() * (max - min + 1));
 
 const ADDITION_LEVELS = [
@@ -49,7 +50,7 @@ function resultFor(type, a, b) {
   return a / b;
 }
 
-export function ArithmeticQuiz({ type }) {
+export function ArithmeticQuiz({ type, onLevelChange, initialLevel }) {
   const { user } = useAuth();
   const config = CONFIG[type];
   const [level, setLevel] = useState(null);
@@ -59,12 +60,15 @@ export function ArithmeticQuiz({ type }) {
   const [score, setScore] = useState(0);
   const [finished, setFinished] = useState(false);
   const [earnedPoints, setEarnedPoints] = useState(0);
+  const [error, setError] = useState("");
+  const hasStartedFromUrl = useRef(false);
   const currentLevel = useMemo(() => config.levels.find((item) => item.id === level), [config.levels, level]);
 
   const nextQuestion = (selectedLevel = currentLevel) => {
     const [a,b] = selectedLevel.make();
     setQuestion({ a,b });
     setValue("");
+    setError("");
   };
 
   const start = (id) => {
@@ -74,8 +78,18 @@ export function ArithmeticQuiz({ type }) {
     setScore(0);
     setEarnedPoints(0);
     setFinished(false);
+    setError("");
+    onLevelChange?.(true);
     nextQuestion(selectedLevel);
   };
+
+  useEffect(() => {
+    const requestedLevel = Number(initialLevel);
+    if (!hasStartedFromUrl.current && !level && Number.isInteger(requestedLevel) && requestedLevel >= 1 && requestedLevel <= config.levels.length) {
+      hasStartedFromUrl.current = true;
+      start(requestedLevel);
+    }
+  }, [initialLevel, level, config.levels.length]);
 
   const submit = async () => {
     if (!question || value === "") return;
@@ -95,6 +109,11 @@ export function ArithmeticQuiz({ type }) {
       } catch (_) {}
     }
 
+    if (!correct) {
+      setError("No es correcto todavía. Revísalo e inténtalo de nuevo.");
+      setValue("");
+      return;
+    }
     if (index + 1 >= TOTAL) {
       setFinished(true);
       setValue("");
@@ -126,15 +145,18 @@ export function ArithmeticQuiz({ type }) {
       {user ? <p className={styles.reward}>+{earnedPoints} puntos conseguidos</p> : null}
       <div className={styles.resultActions}>
         <button className={styles.button} onClick={() => start(level)}>Repetir nivel</button>
-        <button className={`${styles.button} ${styles.buttonSecondary}`} onClick={() => setLevel(null)}>Cambiar nivel</button>
+        <button className={`${styles.button} ${styles.buttonSecondary}`} onClick={() => { setLevel(null); onLevelChange?.(false); }}>Cambiar nivel</button>
       </div>
     </div>;
   }
 
-  return <div className={styles.practiceBox}>
+  return <div className={`${styles.practiceBox} ${styles.practiceCompact}`}>
     <p className={styles.questionProgress}><strong>{currentLevel.name}</strong> · Pregunta {index + 1} de {TOTAL}</p>
+    <div className={styles.progressTrack} aria-label={`Progreso: ${index} de ${TOTAL} preguntas completadas`}><div className={styles.progressFill} style={{ width: `${(index / TOTAL) * 100}%` }} /></div>
     <div className={styles.operation}>{question.a} {config.symbol} {question.b}</div>
     <div className={styles.answerDisplay}>{value || "?"}</div>
+    {error ? <p className={styles.answerError} role="alert">{error}</p> : null}
     <div className={styles.keyboardWrap}><MenuKeyboard callback={handleKey}/></div>
   </div>;
 }
+ArithmeticQuiz.propTypes = { type: PropTypes.oneOf(["addition", "subtraction", "division"]).isRequired, onLevelChange: PropTypes.func, initialLevel: PropTypes.oneOfType([PropTypes.number, PropTypes.string]) };

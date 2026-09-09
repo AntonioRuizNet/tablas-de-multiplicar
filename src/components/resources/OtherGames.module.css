@@ -3,7 +3,8 @@
   border-color:#ded6f7;
 }
 .card {
-  min-height:210px;
+  min-height:0;
+  padding:16px;
   border-top:0!important;
   position:relative;
   overflow:hidden;
@@ -34,8 +35,8 @@
 }
 .division::after { background:#d9d1ff; }
 .icon {
-  font-size:2rem;
-  margin-bottom:12px;
+  font-size:1.55rem;
+  margin:0;
   color:#5e52a8;
 }
 .addition .icon { color:#2f817b; }
@@ -47,3 +48,5 @@
   font-weight:850;
   color:#5c5688;
 }
+.cardTitle{display:flex;align-items:center;gap:10px}
+.card h2{margin:0;font-size:1.2rem}.card p{margin:4px 0 0;line-height:1.45}.card .cta{margin-top:5px}

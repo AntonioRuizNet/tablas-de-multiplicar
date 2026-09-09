@@ -39,16 +39,6 @@ button, input, select, textarea { font: inherit; }
 button, a { -webkit-tap-highlight-color: transparent; }
 ::selection { background: var(--yellow-soft); }
 
-@media screen and (max-width: 800px) and (orientation: landscape) {
-  body::before {
-    content: "Gira tu dispositivo a modo vertical para jugar mejor 📱";
-    position: fixed; inset: 0; z-index: 9999; display: flex;
-    justify-content: center; align-items: center; padding: 2rem;
-    background: #25313c; color: white; text-align: center; font-size: 1.25rem;
-  }
-  body * { visibility: hidden; }
-}
-
 /* Impresión del diploma: las reglas globales deben vivir fuera de CSS Modules. */
 @media print {
   html,
@@ -80,4 +70,3 @@ button, a { -webkit-tap-highlight-color: transparent; }
     print-color-adjust: exact !important;
   }
 }
-
