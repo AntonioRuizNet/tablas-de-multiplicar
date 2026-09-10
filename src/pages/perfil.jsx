@@ -171,13 +171,13 @@ export default function Perfil() {
   const progress = data?.progress?.userConfig;
 
   return (
-    <AppLayout title="Mi perfil | Tablas de multiplicar" description="Consulta y actualiza tu perfil y progreso.">
+    <AppLayout title={`${user.name || "Mi perfil"} | Tablas de multiplicar`} description="Consulta y actualiza tu perfil y progreso.">
       <Head><meta name="robots" content="noindex,follow" /></Head>
       <div className={styles.profilePage}>
         <section className={styles.profileCard}>
           <div className={styles.profileHeader}>
             <UserAvatar icon={user.avatarIcon} color={user.avatarColor} size={72} />
-            <div><h1 className={styles.title}>Mi perfil</h1><p className={styles.subtitle}>{user.email}</p></div>
+            <div><h1 className={styles.title}>{user.name || "Mi perfil"}</h1><p className={styles.subtitle}>{user.email}</p></div>
           </div>
 
           {recoveryMode ? <p className={styles.success}>Has entrado mediante el enlace de recuperación. Ahora puedes crear una nueva contraseña sin indicar la anterior.</p> : null}

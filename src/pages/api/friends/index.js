@@ -7,12 +7,16 @@ export default async function handler(req, res) {
   const user = await requireUser(req, res); if (!user) return;
   try {
     if (req.method === "GET") {
+      if (req.query.summary === "1") {
+        const pending = await db.query(`SELECT COUNT(*)::int AS count FROM friendships WHERE recipient_id=$1 AND status='pending'`, [user.id]);
+        return res.status(200).json({ ok: true, pendingReceived: pending.rows[0].count });
+      }
       const q = String(req.query.q || "").trim();
       const [search, received, sent, friends] = await Promise.all([
         q.length >= 2 ? db.query(`SELECT ${personFields} FROM users u LEFT JOIN user_progress p ON p.user_id=u.id WHERE u.id<>$1 AND u.name ILIKE $2 ORDER BY u.name ASC LIMIT 10`, [user.id, `%${q}%`]) : Promise.resolve({ rows: [] }),
-        db.query(`SELECT f.id, f.created_at, ${personFields} FROM friendships f JOIN users u ON u.id=f.requester_id LEFT JOIN user_progress p ON p.user_id=u.id WHERE f.recipient_id=$1 AND f.status='pending' ORDER BY f.created_at DESC`, [user.id]),
-        db.query(`SELECT f.id, f.created_at, ${personFields} FROM friendships f JOIN users u ON u.id=f.recipient_id LEFT JOIN user_progress p ON p.user_id=u.id WHERE f.requester_id=$1 AND f.status='pending' ORDER BY f.created_at DESC`, [user.id]),
-        db.query(`SELECT f.id, f.updated_at, ${personFields} FROM friendships f JOIN users u ON u.id=CASE WHEN f.requester_id=$1 THEN f.recipient_id ELSE f.requester_id END LEFT JOIN user_progress p ON p.user_id=u.id WHERE (f.requester_id=$1 OR f.recipient_id=$1) AND f.status='accepted' ORDER BY u.name ASC`, [user.id]),
+        db.query(`SELECT f.id AS friendship_id, f.created_at, ${personFields} FROM friendships f JOIN users u ON u.id=f.requester_id LEFT JOIN user_progress p ON p.user_id=u.id WHERE f.recipient_id=$1 AND f.status='pending' ORDER BY f.created_at DESC`, [user.id]),
+        db.query(`SELECT f.id AS friendship_id, f.created_at, ${personFields} FROM friendships f JOIN users u ON u.id=f.recipient_id LEFT JOIN user_progress p ON p.user_id=u.id WHERE f.requester_id=$1 AND f.status='pending' ORDER BY f.created_at DESC`, [user.id]),
+        db.query(`SELECT f.id AS friendship_id, f.updated_at, ${personFields} FROM friendships f JOIN users u ON u.id=CASE WHEN f.requester_id=$1 THEN f.recipient_id ELSE f.requester_id END LEFT JOIN user_progress p ON p.user_id=u.id WHERE (f.requester_id=$1 OR f.recipient_id=$1) AND f.status='accepted' ORDER BY u.name ASC`, [user.id]),
       ]);
       return res.status(200).json({ ok:true, search:search.rows, pendingReceived:received.rows, pendingSent:sent.rows, friends:friends.rows });
     }

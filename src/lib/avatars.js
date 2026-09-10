@@ -5,6 +5,7 @@ import {
   GiHydra, GiIceGolem, GiImperialCrown, GiIncomingRocket, GiInvisibleFace,
   GiJellyfish, GiLightningTrio,
 } from "react-icons/gi";
+import { FaCat, FaDog, FaDragon, FaFish, FaFrog, FaHippo, FaHorse, FaSpider } from "react-icons/fa";
 
 export const AVATAR_COLORS = [
   "#5B8DEF", "#7C5CE7", "#E85D75", "#F28C4B", "#E5B83B", "#56B870",
@@ -18,6 +19,8 @@ export const AVATARS = [
   ["GiWolverineClaws", GiWolverineClaws], ["GiHummingbird", GiHummingbird], ["GiHorseHead", GiHorseHead], ["GiHoodedAssassin", GiHoodedAssassin],
   ["GiHoneycomb", GiHoneycomb], ["GiHydra", GiHydra], ["GiIceGolem", GiIceGolem], ["GiImperialCrown", GiImperialCrown],
   ["GiIncomingRocket", GiIncomingRocket], ["GiInvisibleFace", GiInvisibleFace], ["GiJellyfish", GiJellyfish], ["GiLightningTrio", GiLightningTrio],
+  ["FaCat", FaCat], ["FaDog", FaDog], ["FaDragon", FaDragon], ["FaFish", FaFish],
+  ["FaFrog", FaFrog], ["FaHippo", FaHippo], ["FaHorse", FaHorse], ["FaSpider", FaSpider],
 ];
 
 export const AVATAR_ICON_NAMES = AVATARS.map(([name]) => name);

@@ -16,5 +16,6 @@
 .classroomLink:hover { background:#dff8fa; }
 .classroomLink.active { background:#d7f4f5; color:#245c61; box-shadow:inset 0 0 0 1px rgba(76,177,184,.32); }
 .classroomLink .icon { background:#dff7f7; }
+.badge{display:grid;place-items:center;min-width:19px;height:19px;padding:0 5px;margin-left:auto;border-radius:999px;background:#d94c68;color:#fff;font-size:.68rem;font-weight:900;line-height:1}
 
 @media(max-width:900px){.panel{padding-bottom:0}}

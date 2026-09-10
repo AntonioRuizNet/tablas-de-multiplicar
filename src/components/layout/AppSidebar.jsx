@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
@@ -30,12 +30,28 @@ function isLinkActive(pathname, href) {
 export function AppSidebar({ onNavigate }) {
   const router = useRouter();
   const { user } = useAuth();
+  const [pendingFriends, setPendingFriends] = useState(0);
   const handleNavigate = () => { if (onNavigate) onNavigate(); };
   const classroomLabel = user?.role === "teacher" || user?.role === "admin" ? "Mis aulas" : "Mi aula";
   const isTeacher = user?.role === "teacher" || user?.role === "admin";
   const links = user
     ? [...APP_NAV_LINKS, ["/historial", "🕘", "Mi historial"], ["/mi-aula", "👨‍🏫", classroomLabel, "classroom"], ["/amigos", "🤝", "Amigos", "classroom"], ...(isTeacher ? [["/estadisticas-aula", "📊", "Estadísticas del aula", "classroom"]] : [])]
     : APP_NAV_LINKS;
+
+  useEffect(() => {
+    if (!user) return undefined;
+    let cancelled = false;
+    const loadPending = async () => {
+      try {
+        const response = await fetch("/api/friends?summary=1", { cache: "no-store" });
+        const data = await response.json();
+        if (!cancelled && response.ok) setPendingFriends(Number(data.pendingReceived || 0));
+      } catch (_) {}
+    };
+    loadPending();
+    const interval = window.setInterval(loadPending, 30000);
+    return () => { cancelled = true; window.clearInterval(interval); };
+  }, [user]);
 
   return (
     <div className={styles.panel}>
@@ -44,7 +60,7 @@ export function AppSidebar({ onNavigate }) {
           const active = isLinkActive(router.asPath.split("?")[0], href);
           return (
             <Link key={href} href={href} className={`${styles.link} ${active ? styles.active : ""} ${variant === "otherGames" ? styles.otherGamesLink : ""} ${variant === "classroom" ? styles.classroomLink : ""}`} onClick={handleNavigate} aria-current={active ? "page" : undefined}>
-              <span className={styles.icon}>{icon}</span><span>{label}</span>
+              <span className={styles.icon}>{icon}</span><span>{label}</span>{href === "/amigos" && pendingFriends > 0 ? <span className={styles.badge} aria-label={`${pendingFriends} solicitudes pendientes`}>{pendingFriends > 99 ? "99+" : pendingFriends}</span> : null}
             </Link>
           );
         })}
