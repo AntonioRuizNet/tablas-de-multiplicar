@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import Link from "next/link";
 import { AppLayout } from "../components/layout/AppLayout";
 import { UserAvatar } from "../components/avatar/UserAvatar";
 import styles from "../styles/friends.module.css";
@@ -14,6 +15,6 @@ export default function Amigos() {
     {hasSearched ? <section><h2>Coincidencias</h2>{data.search.length?<ul>{data.search.map(p=><Player key={p.id} player={p} label="Enviar solicitud" action={()=>send({action:"request",targetId:p.id})}/>)}</ul>:<p>No hay jugadores coincidentes.</p>}</section>:null}
     <div className={styles.requestsGrid}><section><h2>Solicitudes recibidas</h2>{data.pendingReceived.length?<ul>{data.pendingReceived.map(p=><li className={styles.player} key={p.friendship_id}><UserAvatar icon={p.avatar_icon} color={p.avatar_color} size={38}/><div><strong>{p.name}</strong><span>{p.points} puntos · solicitud pendiente</span></div><button onClick={()=>send({action:"accept",friendshipId:p.friendship_id})}>Aceptar</button><button onClick={()=>send({action:"reject",friendshipId:p.friendship_id})}>Rechazar</button></li>)}</ul>:<p>No tienes solicitudes pendientes.</p>}</section>
     <section><h2>Solicitudes enviadas</h2>{data.pendingSent.length?<ul>{data.pendingSent.map(p=><Player key={p.friendship_id} player={p} label="Cancelar" action={()=>send({action:"remove",friendshipId:p.friendship_id})}/>)}</ul>:<p>No tienes solicitudes enviadas.</p>}</section></div>
-    <section><h2>Mis amigos</h2>{data.friends.length?<ul>{data.friends.map(p=><Player key={p.friendship_id} player={p} label="Eliminar" action={()=>send({action:"remove",friendshipId:p.friendship_id})}/>)}</ul>:<p>Aún no tienes amigos añadidos.</p>}</section>
+    <section><h2>Mis amigos</h2>{data.friends.length?<ul>{data.friends.map(p=><li className={styles.player} key={p.friendship_id}><UserAvatar icon={p.avatar_icon} color={p.avatar_color} size={38}/><div><strong>{p.name}</strong><span>{p.points} puntos</span></div><Link className={styles.messageLink} href={`/mensajes?con=${p.id}`}>Mensaje</Link><button onClick={()=>send({action:"remove",friendshipId:p.friendship_id})}>Eliminar</button></li>)}</ul>:<p>Aún no tienes amigos añadidos.</p>}</section>
   </main></AppLayout>;
 }

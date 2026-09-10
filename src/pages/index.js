@@ -1,6 +1,7 @@
 import React from "react";
 import Head from "next/head";
 import Link from "next/link";
+import { FaDivide, FaMinus, FaPlus, FaTimes } from "react-icons/fa";
 import styles from "./index.module.css";
 import { StaticTable } from "../components/seo/StaticTable";
 import { AppLayout } from "../components/layout/AppLayout";
@@ -10,10 +11,10 @@ const OG_IMAGE = `${SITE_URL}/og-image.png`;
 
 const TABLES = Array.from({ length: 12 }, (_, i) => i + 1);
 const QUICK_OPERATIONS = [
-  { href: "/todas-las-tablas-de-multiplicar", icon: "✖️", title: "Multiplicaciones", levels: TABLES, itemHref: (level) => `/tabla-del-${level}` },
-  { href: "/sumas", icon: "＋", title: "Sumas", levels: Array.from({ length: 7 }, (_, index) => index + 1), itemHref: (level) => `/sumas?nivel=${level}` },
-  { href: "/restas", icon: "−", title: "Restas", levels: Array.from({ length: 7 }, (_, index) => index + 1), itemHref: (level) => `/restas?nivel=${level}` },
-  { href: "/divisiones", icon: "÷", title: "Divisiones", levels: Array.from({ length: 7 }, (_, index) => index + 1), itemHref: (level) => `/divisiones?nivel=${level}` },
+  { href: "/todas-las-tablas-de-multiplicar", Icon: FaTimes, title: "Multiplicaciones", levels: TABLES, itemHref: (level) => `/tabla-del-${level}` },
+  { href: "/sumas", Icon: FaPlus, title: "Sumas", levels: Array.from({ length: 7 }, (_, index) => index + 1), itemHref: (level) => `/sumas?nivel=${level}` },
+  { href: "/restas", Icon: FaMinus, title: "Restas", levels: Array.from({ length: 7 }, (_, index) => index + 1), itemHref: (level) => `/restas?nivel=${level}` },
+  { href: "/divisiones", Icon: FaDivide, title: "Divisiones", levels: Array.from({ length: 7 }, (_, index) => index + 1), itemHref: (level) => `/divisiones?nivel=${level}` },
 ];
 
 export default function Home() {
@@ -144,7 +145,7 @@ export default function Home() {
 
               <div className={styles.quickOperations}>
                 {QUICK_OPERATIONS.map((operation) => <section key={operation.href} className={styles.quickOperation}>
-                  <Link href={operation.href} className={styles.quickOperationTitle}><span aria-hidden="true">{operation.icon}</span><strong>{operation.title}</strong></Link>
+                  <Link href={operation.href} className={styles.quickOperationTitle}><span aria-hidden="true"><operation.Icon /></span><strong>{operation.title}</strong></Link>
                   <div className={styles.quickLevels}>{operation.levels.map((level) => <Link key={level} href={operation.itemHref(level)} aria-label={`${operation.title}, ${operation.title === "Multiplicaciones" ? `tabla ${level}` : `nivel ${level}`}`}>{operation.title === "Multiplicaciones" ? level : `Nivel ${level}`}</Link>)}</div>
                 </section>)}
               </div>

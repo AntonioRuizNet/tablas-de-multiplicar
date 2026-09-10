@@ -31,11 +31,12 @@ export function AppSidebar({ onNavigate }) {
   const router = useRouter();
   const { user } = useAuth();
   const [pendingFriends, setPendingFriends] = useState(0);
+  const [unreadMessages, setUnreadMessages] = useState(0);
   const handleNavigate = () => { if (onNavigate) onNavigate(); };
   const classroomLabel = user?.role === "teacher" || user?.role === "admin" ? "Mis aulas" : "Mi aula";
   const isTeacher = user?.role === "teacher" || user?.role === "admin";
   const links = user
-    ? [...APP_NAV_LINKS, ["/historial", "🕘", "Mi historial"], ["/mi-aula", "👨‍🏫", classroomLabel, "classroom"], ["/amigos", "🤝", "Amigos", "classroom"], ...(isTeacher ? [["/estadisticas-aula", "📊", "Estadísticas del aula", "classroom"]] : [])]
+    ? [...APP_NAV_LINKS, ["/historial", "🕘", "Mi historial"], ["/mi-aula", "👨‍🏫", classroomLabel, "classroom"], ["/amigos", "🤝", "Amigos", "classroom"], ["/mensajes", "💬", "Mensajes", "classroom"], ...(isTeacher ? [["/estadisticas-aula", "📊", "Estadísticas del aula", "classroom"]] : [])]
     : APP_NAV_LINKS;
 
   useEffect(() => {
@@ -43,9 +44,10 @@ export function AppSidebar({ onNavigate }) {
     let cancelled = false;
     const loadPending = async () => {
       try {
-        const response = await fetch("/api/friends?summary=1", { cache: "no-store" });
-        const data = await response.json();
-        if (!cancelled && response.ok) setPendingFriends(Number(data.pendingReceived || 0));
+        const [friendsResponse, messagesResponse] = await Promise.all([fetch("/api/friends?summary=1", { cache: "no-store" }), fetch("/api/messages?summary=1", { cache: "no-store" })]);
+        const [friendsData, messagesData] = await Promise.all([friendsResponse.json(), messagesResponse.json()]);
+        if (!cancelled && friendsResponse.ok) setPendingFriends(Number(friendsData.pendingReceived || 0));
+        if (!cancelled && messagesResponse.ok) setUnreadMessages(Number(messagesData.unread || 0));
       } catch (_) {}
     };
     loadPending();
@@ -60,7 +62,7 @@ export function AppSidebar({ onNavigate }) {
           const active = isLinkActive(router.asPath.split("?")[0], href);
           return (
             <Link key={href} href={href} className={`${styles.link} ${active ? styles.active : ""} ${variant === "otherGames" ? styles.otherGamesLink : ""} ${variant === "classroom" ? styles.classroomLink : ""}`} onClick={handleNavigate} aria-current={active ? "page" : undefined}>
-              <span className={styles.icon}>{icon}</span><span>{label}</span>{href === "/amigos" && pendingFriends > 0 ? <span className={styles.badge} aria-label={`${pendingFriends} solicitudes pendientes`}>{pendingFriends > 99 ? "99+" : pendingFriends}</span> : null}
+              <span className={styles.icon}>{icon}</span><span>{label}</span>{href === "/amigos" && pendingFriends > 0 ? <span className={styles.badge} aria-label={`${pendingFriends} solicitudes pendientes`}>{pendingFriends > 99 ? "99+" : pendingFriends}</span> : null}{href === "/mensajes" && unreadMessages > 0 ? <span className={styles.badge} aria-label={`${unreadMessages} mensajes sin leer`}>{unreadMessages > 99 ? "99+" : unreadMessages}</span> : null}
             </Link>
           );
         })}
